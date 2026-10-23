@@ -22,3 +22,16 @@ These caliper photos are not orthographic and do not measure the metal rail. Rea
 The 5-mm-deep gauge checks XY fit only. It cannot validate the center boss, engagement mechanism or actual required insertion depth. If the gauge binds, photograph the exposed metal rail end directly along the length axis before changing dimensions.
 
 **Unknowns affecting fit:** aluminum rail cross-section, actual interior opening, intended insertion depth, center boss engagement, retention mechanism, and printing shrinkage. The 5-mm-deep gauge only tests cross-sectional clearance. No physical fit test has been performed.
+
+## Interior silhouette correction — October 23, 2026
+
+The first physical fit gauge failed because the opening was modeled with `square()` (straight long walls), even though the original cap's interior follows its curved, narrowed-at-ends exterior. This was a modeling mistake independent of nominal clearance.
+
+The revised cavity uses the same bowed/tapered parametric outline as the exterior, independently sized to **21.3 mm long x 10.3 mm maximum width**, with proportional narrowing at each end. Profile cross-section extracted from the locally rendered STL at the middle of the 5 mm gauge:
+
+- Y = 0 mm: inner width **10.30 mm**.
+- Y = 5 mm: inner width **9.93 mm**.
+- Y = 8 mm: inner width **9.27 mm**.
+- Y = 9.5 mm: inner width **8.74 mm**.
+
+Both revised local STL models were confirmed watertight and single-body. This checks rendered geometry, not fit against the physical aluminum rail. These widths are **predicted from the source** and should be adjusted after the next real fit test. The metal rail's exact curved profile is still unknown.
