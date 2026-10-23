@@ -1,13 +1,16 @@
-name: Build OpenSCAD exports
+name: Build and publish OpenSCAD exports
 on:
   push:
     paths:
       - 'src/**'
-      - '.github/workflows/build-exports.yml'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: openscad-exports-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   exports:
@@ -15,25 +18,37 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        timeout-minutes: 2
       - name: Install OpenSCAD
+        timeout-minutes: 5
         run: |
           sudo timeout 180s apt-get update -qq
           sudo timeout 180s apt-get install -y openscad
-      - name: Render full end cap and gauge
+      - name: Render full cap and 5mm fit gauge
+        timeout-minutes: 4
         run: |
           mkdir -p exports
           timeout 120s openscad -o exports/end-cap.stl -D 'mode="final"' src/end-cap.scad
           timeout 120s openscad -o exports/fit-gauge.stl -D 'mode="fit_gauge"' src/end-cap.scad
           timeout 120s openscad -o exports/end-cap-geometry.3mf -D 'mode="final"' src/end-cap.scad
           timeout 120s openscad -o exports/fit-gauge-geometry.3mf -D 'mode="fit_gauge"' src/end-cap.scad
-          test -s exports/end-cap.stl
-          test -s exports/fit-gauge.stl
-          test -s exports/end-cap-geometry.3mf
-          test -s exports/fit-gauge-geometry.3mf
-      - name: Upload printable meshes
+          for f in exports/end-cap.stl exports/fit-gauge.stl exports/end-cap-geometry.3mf exports/fit-gauge-geometry.3mf; do test -s "$f"; done
+      - name: Commit exports to main
+        if: github.ref == 'refs/heads/main'
+        timeout-minutes: 2
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add exports/end-cap.stl exports/fit-gauge.stl exports/end-cap-geometry.3mf exports/fit-gauge-geometry.3mf
+          if ! git diff --cached --quiet; then
+            git commit -m "build: synchronize printable meshes [skip ci]"
+            timeout 45s git push origin HEAD:main
+          fi
+      - name: Upload downloadable printable meshes
         uses: actions/upload-artifact@v4
+        timeout-minutes: 2
         with:
-          name: miniblind-end-cap-prototype-meshes
+          name: miniblind-end-cap-meshes
           path: exports/
           if-no-files-found: error
           retention-days: 90
