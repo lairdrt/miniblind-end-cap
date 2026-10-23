@@ -1,0 +1,7 @@
+# Editor and temporary files
+*~
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+*.scad.autosave
