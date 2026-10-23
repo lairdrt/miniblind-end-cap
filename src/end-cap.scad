@@ -1,7 +1,9 @@
 // Miniblind bottom-rail protective end cap
 // Copyright (C) 2026. Released under GPL-3.0-or-later.
 // X = width; Y = length; Z = depth. Z=0 is the closed end.
-// 21 x 10 mm rail measured; 21.3 x 10.3 mm cavity prototype; NOT fit-tested.
+// 21 x 10 mm rail measured; 21.3 mm interior length is retained.
+// Updated curved width: 11.3 mm at center, +0.5 mm clearance on each side.
+// Prototype still awaits successful physical fit test.
 
 /* [Configuration] */
 mode = "final"; // [final,fit_gauge]
@@ -21,10 +23,11 @@ side_taper = 0.70;
 /* [Measured rail fit (mm)] */
 rail_length = 21.0;        // Measured metal rail long axis, approximate
 rail_width = 10.0;         // Measured metal rail short axis, approximate
-length_clearance = 0.30;  // TOTAL added length (0.15 per end)
-width_clearance = 0.30;   // TOTAL added width (0.15 per side)
+length_clearance = 0.30;  // UNCHANGED: +0.15 per end
+width_clearance = 0.30;   // Original total width allowance
+side_wall_reduction = 0.50; // Move EACH curved cavity side outward by 0.50 mm
 inside_corner_radius = 0.40; // Unmeasured metal corner geometry
-inside_end_ratio = width_ends / width_middle; // Curved-opening end/middle ratio, adjustable after fit test
+inside_end_ratio = width_ends / width_middle; // Base taper, before uniform wall reduction
 
 /* [Strength (mm)] */
 face = 2.6;
@@ -48,7 +51,9 @@ assert(cap_depth > face && face >= 1.2);
 assert(rail_length > 0 && rail_width > 0);
 assert(length_clearance >= 0 && width_clearance >= 0);
 assert(rail_length + length_clearance < length);
-assert(rail_width + width_clearance < width_ends);
+assert(side_wall_reduction >= 0);
+assert(rail_width + width_clearance + 2*side_wall_reduction < width_middle);
+assert((rail_width + width_clearance)*inside_end_ratio + 2*side_wall_reduction < width_ends);
 assert(inside_corner_radius >= 0 && inside_corner_radius < rail_width/4);
 assert(inside_end_ratio > 0 && inside_end_ratio < 1);
 assert(corner_radius > 0 && corner_radius < width_ends/4);
@@ -80,11 +85,12 @@ module outer_outline() {
 }
 
 module cavity_outline() {
-    // Preserve curved/tapered interior from the original reference cap.
-    // Start with proportional narrowing at the ends; independently tune
-    // curvature after we see the bare rail cross-section / gauge fit.
-    inner_middle = rail_width + width_clearance;
-    inner_ends = inner_middle * inside_end_ratio;
+    // Widen the curved cavity by 0.5 mm per SIDE along its full length.
+    // Both middle width and narrow-end width receive the same +1.0 mm;
+    // scaling only the maximum width would leave the ends undersized.
+    base_middle = rail_width + width_clearance;
+    inner_middle = base_middle + 2*side_wall_reduction;
+    inner_ends = base_middle * inside_end_ratio + 2*side_wall_reduction;
     shaped_outline(rail_length + length_clearance,
                    inner_middle, inner_ends, inside_corner_radius);
 }
