@@ -1,7 +1,7 @@
 // Miniblind bottom-rail protective end cap
 // Copyright (C) 2026. Released under GPL-3.0-or-later.
 // X = width; Y = length; Z = depth. Z=0 is the closed end.
-// Photo-derived prototype only. Not fitted to the actual metal rail.
+// 21 x 10 mm rail measured; 21.3 x 10.3 mm cavity prototype; NOT fit-tested.
 
 /* [Configuration] */
 mode = "final"; // [final,fit_gauge]
@@ -18,8 +18,14 @@ face_chamfer = 0.45;
 side_power = 2.0;
 side_taper = 0.70;
 
-/* [Strength and clearance (mm)] */
-wall = 1.55;
+/* [Measured rail fit (mm)] */
+rail_length = 21.0;        // Measured metal rail long axis, approximate
+rail_width = 10.0;         // Measured metal rail short axis, approximate
+length_clearance = 0.30;  // TOTAL added length (0.15 per end)
+width_clearance = 0.30;   // TOTAL added width (0.15 per side)
+inside_corner_radius = 0.40; // Unmeasured metal corner geometry
+
+/* [Strength (mm)] */
 face = 2.6;
 
 /* [Interior boss (mm)] */
@@ -38,7 +44,11 @@ $fn = 64;
 
 assert(length > 0 && width_middle > width_ends && width_ends > 0);
 assert(cap_depth > face && face >= 1.2);
-assert(wall >= 0.8 && 2*wall < width_ends);
+assert(rail_length > 0 && rail_width > 0);
+assert(length_clearance >= 0 && width_clearance >= 0);
+assert(rail_length + length_clearance < length);
+assert(rail_width + width_clearance < width_ends);
+assert(inside_corner_radius >= 0 && inside_corner_radius < rail_width/4);
 assert(corner_radius > 0 && corner_radius < width_ends/4);
 assert(face_chamfer >= 0 && face_chamfer < face);
 assert(boss_diameter > bore_diameter && bore_depth > 0);
@@ -66,7 +76,12 @@ module outer_outline() {
 }
 
 module cavity_outline() {
-    offset(delta=-wall) outer_outline();
+    // Independent opening dimensions for approximately 21 x 10 mm rail.
+    // Deliberately near-rectangular until actual rail corners are measured.
+    offset(r=inside_corner_radius)
+        offset(delta=-inside_corner_radius)
+            square([rail_width + width_clearance,
+                    rail_length + length_clearance], center=true);
 }
 
 module outer_body() {
