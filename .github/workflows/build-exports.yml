@@ -42,7 +42,27 @@ jobs:
           git add exports/end-cap.stl exports/fit-gauge.stl exports/end-cap-geometry.3mf exports/fit-gauge-geometry.3mf
           if ! git diff --cached --quiet; then
             git commit -m "build: synchronize printable meshes [skip ci]"
-            timeout 45s git push origin HEAD:main
+            # The source change can overlap later documentation edits.
+            # Rebase onto main and retry only three times; never force push.
+            published=false
+            for attempt in 1 2 3; do
+              timeout 30s git fetch origin main
+              if ! timeout 30s git rebase origin/main; then
+                timeout 10s git rebase --abort || true
+                echo "Export commit conflicts with main; manual review required"
+                exit 1
+              fi
+              if timeout 45s git push origin HEAD:main; then
+                published=true
+                break
+              fi
+              echo "Concurrent main update; bounded retry $attempt/3"
+              sleep 2
+            done
+            if [ "$published" != true ]; then
+              echo "Unable to publish exports after three attempts"
+              exit 1
+            fi
           fi
       - name: Upload downloadable printable meshes
         uses: actions/upload-artifact@v4
