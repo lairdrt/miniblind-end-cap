@@ -35,3 +35,14 @@ The revised cavity uses the same bowed/tapered parametric outline as the exterio
 - Y = 9.5 mm: inner width **8.74 mm**.
 
 Both revised local STL models were confirmed watertight and single-body. This checks rendered geometry, not fit against the physical aluminum rail. These widths are **predicted from the source** and should be adjusted after the next real fit test. The metal rail's exact curved profile is still unknown.
+
+## Fit-test revision: widen all curved sides — October 23, 2026
+
+User physical fit feedback on the curved gauge:
+1. Interior length acceptable, approximately 0.25 mm oversize: **leave unchanged** (nominal 21.3 mm).
+2. Interior width insufficient everywhere along both bowed side walls, including near ends: **increase overall opening by 1.0 mm at every lengthwise station**.
+3. Side walls approximately 0.5 mm too thick: moving each inside wall outward by 0.5 mm accomplishes **both** corrections without modifying the exterior (do not apply wall reduction a second time).
+
+New parameter `side_wall_reduction = 0.50` is added per side to both the middle and narrow-end widths **after** applying the original curvature ratio; taper curvature remains unchanged. New opening width at center: **11.30 mm**; end widths gain 1.0 mm as well. The full outer envelope remains 25.0 × 15.5 mm and depth 12.7 mm. This revision does not change the opening length or boss.
+
+Locally rendered OpenSCAD meshes of both full cap and 5 mm fit gauge are watertight, single-body. The sidewall at the center is reduced from 2.60 to **2.10 mm**. This geometry result is not a physical fit confirmation. Test the fit gauge before the full cap.
