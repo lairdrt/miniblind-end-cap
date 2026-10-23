@@ -55,33 +55,36 @@ assert(boss_diameter > bore_diameter && bore_depth > 0);
 assert(boss_height > bore_depth && boss_height <= cap_depth-face);
 assert(gauge_depth > 0 && gauge_depth <= cap_depth);
 
-function half_width(y) =
-    (width_ends + (width_middle-width_ends) *
-    pow(max(0, 1-pow(abs(2*y/length), side_power)), side_taper)) / 2;
+// Both boundaries use the SAME bowed/tapered profile family.
+// Their length and width envelopes are independently adjustable.
+function half_width(y, profile_length, middle_width, end_width) =
+    (end_width + (middle_width-end_width) *
+    pow(max(0, 1-pow(abs(2*y/profile_length), side_power)), side_taper)) / 2;
 
-module nominal_outline() {
-    polygon(points=concat(
-        [for (i=[0:profile_segments])
-            let(y=-length/2 + length*i/profile_segments)
-            [ half_width(y), y ]],
-        [for (i=[profile_segments:-1:0])
-            let(y=-length/2 + length*i/profile_segments)
-            [-half_width(y), y ]]
-    ));
+module shaped_outline(profile_length, middle_width, end_width, radius) {
+    offset(r=radius) offset(delta=-radius)
+        polygon(points=concat(
+            [for (i=[0:profile_segments])
+                let(y=-profile_length/2 + profile_length*i/profile_segments)
+                [half_width(y, profile_length, middle_width, end_width), y]],
+            [for (i=[profile_segments:-1:0])
+                let(y=-profile_length/2 + profile_length*i/profile_segments)
+                [-half_width(y, profile_length, middle_width, end_width), y]]
+        ));
 }
 
 module outer_outline() {
-    offset(r=corner_radius) offset(delta=-corner_radius)
-        nominal_outline();
+    shaped_outline(length, width_middle, width_ends, corner_radius);
 }
 
 module cavity_outline() {
-    // Independent opening dimensions for approximately 21 x 10 mm rail.
-    // Deliberately near-rectangular until actual rail corners are measured.
-    offset(r=inside_corner_radius)
-        offset(delta=-inside_corner_radius)
-            square([rail_width + width_clearance,
-                    rail_length + length_clearance], center=true);
+    // Preserve curved/tapered interior from the original reference cap.
+    // Start with proportional narrowing at the ends; independently tune
+    // curvature after we see the bare rail cross-section / gauge fit.
+    inner_middle = rail_width + width_clearance;
+    inner_ends = inner_middle * width_ends / width_middle;
+    shaped_outline(rail_length + length_clearance,
+                   inner_middle, inner_ends, inside_corner_radius);
 }
 
 module outer_body() {
