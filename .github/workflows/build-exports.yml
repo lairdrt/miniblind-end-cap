@@ -1,0 +1,39 @@
+name: Build OpenSCAD exports
+on:
+  push:
+    paths:
+      - 'src/**'
+      - '.github/workflows/build-exports.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exports:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install OpenSCAD
+        run: |
+          sudo timeout 180s apt-get update -qq
+          sudo timeout 180s apt-get install -y openscad
+      - name: Render full end cap and gauge
+        run: |
+          mkdir -p exports
+          timeout 120s openscad -o exports/end-cap.stl -D 'mode="final"' src/end-cap.scad
+          timeout 120s openscad -o exports/fit-gauge.stl -D 'mode="fit_gauge"' src/end-cap.scad
+          timeout 120s openscad -o exports/end-cap-geometry.3mf -D 'mode="final"' src/end-cap.scad
+          timeout 120s openscad -o exports/fit-gauge-geometry.3mf -D 'mode="fit_gauge"' src/end-cap.scad
+          test -s exports/end-cap.stl
+          test -s exports/fit-gauge.stl
+          test -s exports/end-cap-geometry.3mf
+          test -s exports/fit-gauge-geometry.3mf
+      - name: Upload printable meshes
+        uses: actions/upload-artifact@v4
+        with:
+          name: miniblind-end-cap-prototype-meshes
+          path: exports/
+          if-no-files-found: error
+          retention-days: 90
