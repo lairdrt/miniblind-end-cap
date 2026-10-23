@@ -24,6 +24,7 @@ rail_width = 10.0;         // Measured metal rail short axis, approximate
 length_clearance = 0.30;  // TOTAL added length (0.15 per end)
 width_clearance = 0.30;   // TOTAL added width (0.15 per side)
 inside_corner_radius = 0.40; // Unmeasured metal corner geometry
+inside_end_ratio = width_ends / width_middle; // Curved-opening end/middle ratio, adjustable after fit test
 
 /* [Strength (mm)] */
 face = 2.6;
@@ -49,6 +50,7 @@ assert(length_clearance >= 0 && width_clearance >= 0);
 assert(rail_length + length_clearance < length);
 assert(rail_width + width_clearance < width_ends);
 assert(inside_corner_radius >= 0 && inside_corner_radius < rail_width/4);
+assert(inside_end_ratio > 0 && inside_end_ratio < 1);
 assert(corner_radius > 0 && corner_radius < width_ends/4);
 assert(face_chamfer >= 0 && face_chamfer < face);
 assert(boss_diameter > bore_diameter && bore_depth > 0);
@@ -82,7 +84,7 @@ module cavity_outline() {
     // Start with proportional narrowing at the ends; independently tune
     // curvature after we see the bare rail cross-section / gauge fit.
     inner_middle = rail_width + width_clearance;
-    inner_ends = inner_middle * width_ends / width_middle;
+    inner_ends = inner_middle * inside_end_ratio;
     shaped_outline(rail_length + length_clearance,
                    inner_middle, inner_ends, inside_corner_radius);
 }
