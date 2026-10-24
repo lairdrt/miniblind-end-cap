@@ -2,7 +2,7 @@
 
 Parametric OpenSCAD replacement of the protective plastic cap on a miniblind bottom rail. The originals fracture when the blind contacts a windowsill.
 
-**Status: v0.4 three-station measured-profile prototype; not yet fit-confirmed.** The previous gauge failed. The new internal profile is symmetric about its 21.5 mm length: 10.0 mm across at each end, 11.5 mm across at 5.0 mm from either end, and 13.0 mm at the center (10.75 mm from either end). The exterior remains 25 × 15.5 mm. Full cap retention and boss engagement are still unverified.
+**Status: v0.5 smooth-contour prototype; not yet physically fit-confirmed.** After a visual failure of the joined-segment inside profile, the interior now uses one smooth quartic curve per side, with tangents matched to the exterior at the ends and center. The measured opening remains **21.5 mm long**, **10.0 mm wide at either end**, **11.5 mm at 5 mm inward**, and **13.0 mm at the center**. The exterior remains **25 × 15.5 mm**. Exact constant wall thickness is not possible while satisfying all three measurements with this exterior.
 
 ## Project
 
@@ -27,13 +27,13 @@ The six original reference photographs remain in the initial locally downloadabl
 | `inside_station` | 5.0 | Distance inward from either end |
 | `inside_station_width` | 11.5 | Width at 5.0 mm |
 | `inside_center_width` | 13.0 | Width at the center |
-| `inside_corner_radius` | 0.40 | End corner rounding; compensated in the profile |
+| `inside_corner_radius` | 0.15 | Smaller, unverified fillet; terminal mesh width compensated |
 | Minimum wall thickness | about 1.25 | Computed from printed mesh cross-section |
 | Impact `face` | 2.6 | Design choice |
 | `boss_diameter` | 4.3 | Unverified estimate |
 | `bore_diameter` | 2.35 | Unverified estimate |
 
-The model includes the tapered exterior, separately measured smooth interior profile, reinforced closed face and optional blind-hole center boss. The interior profile is interpolated through three independent width stations rather than scaled from the exterior. Terminal width is compensated for rounding of the inside corners. Physical fit, insertion depth, and retention are not yet validated.
+The model includes the tapered exterior, separately measured smooth interior profile, reinforced closed face and optional blind-hole center boss. The interior is one smooth curve, constrained to the three measured widths and exterior tangent direction at the ends. Terminal width is compensated for the inside corner rounding. Sidewall thickness necessarily varies because a constant inward offset would produce approximately 12.46 mm of interior width at the 5 mm station instead of the measured 11.5 mm. Physical fit, insertion depth, and retention are not yet validated.
 
 ## Open / print
 
@@ -45,7 +45,7 @@ A PETG final part or bumper on the windowsill may improve impact survival, but t
 
 ## Next measurements
 
-Test the updated fit gauge. Report where it contacts or remains loose along the sidewalls. If the profile fits, measure/verify insertion depth and center-boss engagement on the complete cap. Keep source, documentation and generated exports aligned when adjusting parameters.
+First visually inspect the new smooth inside contour against the original plastic cap, then test the updated fit gauge. Report where it contacts or remains loose along the sidewalls. If the profile fits, measure/verify insertion depth and center-boss engagement on the complete cap. Keep source, documentation and generated exports aligned when adjusting parameters.
 
 ## Git / licensing
 
