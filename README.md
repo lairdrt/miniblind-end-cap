@@ -2,13 +2,24 @@
 
 Parametric OpenSCAD replacement of the protective plastic cap on a miniblind bottom rail. The originals fracture when the blind contacts a windowsill.
 
-**Status: v0.14 retention-stub placement refinement.** The v0.11 curved fit-gauge geometry was physically confirmed to fit well. Both 4 × 5 × 2 mm trapezoidal retention stubs on the inside **short end walls** have been slid **0.55 mm straight toward the open lip**. Their tops are now **2.00 mm below the opening**. Each occupies **Z=5.70–10.70 mm**, centered at X=0 with unchanged width, ramp geometry, projection and Y position. The 12.5 mm midpoint interior width, 21.5 mm cavity length, concentric side arcs, exterior, boss, and unchanged stub-free fit gauge are preserved. Retention has not yet been physically tested.
+**Status: FINAL — v0.14 physically fit-accepted (October 24, 2026).** The complete printed end cap **fits successfully**, as confirmed by the user after the last retention-tab placement adjustment. Keep this design as the known-good baseline. The short-end trapezoidal tabs are 4 mm wide × 5 mm tall × 2 mm maximum inward projection, horizontally centered and positioned with their top edges **2 mm below the open lip**. The curved interior midpoint remains **12.5 mm**, with concentric circular sidewalls (outside R55 mm, inside R53.5 mm). Overall outside envelope **25 × 15.5 × 12.7 mm**; opening length **21.5 mm**.
+
+## Finished design — OpenSCAD renders
+
+These images are generated directly from the **final parametric OpenSCAD model** using the repository's GitHub Actions workflow, not conceptual illustrations or photographs:
+
+| Open interior and retention tabs | Direct opening view | Closed exterior face |
+|:---:|:---:|:---:|
+| [![Isometric view of fitted end cap](docs/images/end-cap-isometric.png)](docs/images/end-cap-isometric.png) | [![Top view of cap opening](docs/images/end-cap-opening.png)](docs/images/end-cap-opening.png) | [![Closed impact face of end cap](docs/images/end-cap-closed-face.png)](docs/images/end-cap-closed-face.png) |
+
+The six original caliper photographs are not committed to this repository. These renders document the completed CAD geometry; the physical fit result is based on the user's printed test.
+
 
 ## Project
 
 - [Editable OpenSCAD model](src/end-cap.scad): defaults to complete end cap; switch `mode` to `fit_gauge` for a 5 mm profile test.
 - [Measurement notes](docs/MEASUREMENT_NOTES.md): caliper-photo interpretations and outstanding unknowns.
-- [Automated mesh build](.github/workflows/build-exports.yml): regenerates STL and mesh-only 3MF exports, commits them to `exports/` on `main`, and publishes a GitHub Actions artifact.
+- [Automated OpenSCAD build](.github/workflows/build-exports.yml): regenerates STL and mesh-only 3MF exports and the three rendered model PNGs, commits them to `main`, and publishes printable mesh artifacts.
 - [Additional measurements](reference/README.md): reserved for the metal rail's cross-section and retention details.
 
 The six original reference photographs remain in the initial locally downloadable project ZIP and are **not currently stored in this remote repository**. The editable OpenSCAD source is authoritative; STL/3MF exports are regenerated and committed by the source-change build.
@@ -34,7 +45,7 @@ The six original reference photographs remain in the initial locally downloadabl
 | `boss_diameter` | 4.3 | Unverified estimate |
 | `bore_diameter` | 2.35 | Unverified estimate |
 
-The complete end cap uses the same circle centers for its inner and outer long sides. Setting only the interior center width gives the inner circle radius and a constant 1.50 mm radial separation. Corner transitions and end walls are separately rounded, and the outer shape remains 25 × 15.5 mm. The finished model includes the reinforced closed face and optional hollow center boss. Geometry-render and mesh checks passed locally, but physical fit, insertion depth and boss engagement remain unverified.
+The complete end cap uses the same circle centers for its inner and outer long sides. Setting only the interior center width gives the inner circle radius and a constant 1.50 mm radial separation. Corner transitions and end walls are separately rounded, and the outer shape remains 25 × 15.5 mm. The finished model includes the reinforced closed face and optional hollow center boss. Geometry-render and mesh checks passed locally. The complete printed cap has now been confirmed to fit, including the updated retention tabs.
 
 ## Retention stubs (full cap only)
 
@@ -48,7 +59,7 @@ The full cap has two symmetric raised trapezoid-profile grips at the center of t
 - `stub_embed = 0.20` mm — hidden overlap into each end wall to form a solid joint, *not* an extra protrusion.
 - `stub_top_clearance = 2.0` mm — fixed gap from the open lip to the top of each retention stub.
 
-Each stub is positioned **2.00 mm below the open lip**, using `stub_top_clearance = 2.0` mm. Because the opening is at Z=12.70 mm and each stub is 5.00 mm long, the stubs now occupy **Z=5.70–10.70 mm** (center Z=8.20 mm), precisely **0.55 mm higher** than v0.13. Both remain horizontally centered at X=0; their shape and Y position are unchanged. Two opposed 2 mm projections reduce the free Y opening **locally** by up to 4 mm: test gently, do not force it if the rail resists. The `fit_gauge` continues to check only the originally fitted cavity silhouette and does not include stubs.
+Each stub is positioned **2.00 mm below the open lip**, using `stub_top_clearance = 2.0` mm. Because the opening is at Z=12.70 mm and each stub is 5.00 mm long, the stubs now occupy **Z=5.70–10.70 mm** (center Z=8.20 mm), precisely **0.55 mm higher** than v0.13. Both remain horizontally centered at X=0; their shape and Y position are unchanged. Two opposed 2 mm projections reduce the free Y opening **locally** by up to 4 mm. The user confirmed the printed final cap fits; do not force copies if print settings or rail dimensions differ. The `fit_gauge` continues to check only the originally fitted cavity silhouette and does not include stubs.
 
 ## Open / print
 
@@ -64,6 +75,6 @@ The curved-profile gauge is physically fit-confirmed. Inspect the new trapezoida
 
 ## Git / licensing
 
-This repository is the authoritative **published** version for future work. The current published history is new and does not preserve the earlier local ZIP's commit SHA. The first physically fitted design should receive a separate known-good commit/tag. Source changes trigger automated STL and 3MF publication to `exports/` on the `main` branch.
+This repository's **main** branch records the accepted v0.14 design. The unchanged parametric source is the master; STL, 3MF, and OpenSCAD PNG preview exports are generated and committed by GitHub Actions. The fit-accepted source revision is [`49fb175`](https://github.com/lairdrt/miniblind-end-cap/commit/49fb17565e1882e281f49856c0465950582f5aa9). This commit is an immutable checkpoint; future refinements should branch from the known-good geometry rather than silently replacing it.
 
 Original OpenSCAD source and text: GPL-3.0-or-later. See LICENSE.
