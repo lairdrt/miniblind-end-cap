@@ -46,3 +46,21 @@ User physical fit feedback on the curved gauge:
 New parameter `side_wall_reduction = 0.50` is added per side to both the middle and narrow-end widths **after** applying the original curvature ratio; taper curvature remains unchanged. New opening width at center: **11.30 mm**; end widths gain 1.0 mm as well. The full outer envelope remains 25.0 × 15.5 mm and depth 12.7 mm. This revision does not change the opening length or boss.
 
 Locally rendered OpenSCAD meshes of both full cap and 5 mm fit gauge are watertight, single-body. The sidewall at the center is reduced from 2.60 to **2.10 mm**. This geometry result is not a physical fit confirmation. Test the fit gauge before the full cap.
+
+## Three-station inside-profile replacement — October 24, 2026
+
+**Latest physical measurements supersede all earlier inferred cavity profiles.** The previous 21.3 mm length and 11.3 mm center-width gauge failed. User measured the original interior along its 21.5 mm long axis, from one end, with symmetry around the halfway point:
+
+| From either inside end | Inside width |
+|---:|---:|
+| 0.0 mm | 10.0 mm |
+| 5.0 mm | 11.5 mm |
+| 10.75 mm (center) | 13.0 mm |
+
+The new cavity uses two monotonic, C1-continuous cubic Hermite segments **per half**, with zero slope at the center and matched slopes at the intermediate station. This is a smooth interpolation through actual supplied measurements, **not** a uniform expansion of the old curved opening. The exterior shape, overall dimensions, cap depth, central boss, and original corner-radius parameter remain unchanged.
+
+The short end has a 0.4 mm radius, so the unrounded underlying input profile must be slightly wider there: the underlying end width is the measured 10.0 mm plus 1.8× the 0.4 mm corner radius. This 1.8 factor is empirically calibrated to the current OpenSCAD offset behavior at the current radius; recheck mesh station widths if changing the radius.
+
+**Rendered local STL cross-section (gauge at z=2.5 mm):** terminal width 9.979 mm, 5.0 mm from either end 11.500 mm, center 13.000 mm; inside length 21.500 mm. Minimum cross-sectional wall thickness measured from the mesh is approximately **1.25 mm**. Both full and gauge STLs were rendered successfully; gauge mesh validated watertight, one body. These are digital measurements, **not a successful physical fit test**.
+
+Next test: try the revised 5 mm gauge and report whether the new profile is tight, loose or snug at the ends, intermediate stations and center. A full cap still requires separate insertion-depth and boss checks.
