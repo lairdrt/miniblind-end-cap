@@ -2,7 +2,7 @@
 
 Parametric OpenSCAD replacement of the protective plastic cap on a miniblind bottom rail. The originals fracture when the blind contacts a windowsill.
 
-**Status: v0.13 centered retention-stub prototype.** The v0.11 curved fit gauge was physically verified to fit well. The two trapezoidal 4 × 5 × 2 mm retention stubs on the full cap's *short interior end walls* are now centered **both horizontally (X=0) and vertically (Z=7.65 mm)** on the available wall face. Each stub occupies Z=5.15–10.15 mm, leaving 2.55 mm above and below. The 12.5 mm interior center width, 21.5 mm inner length, concentric curved wall profile, 25 × 15.5 mm outside envelope, center boss and stub-free fit gauge are unchanged. The new stub placement still requires a physical fit test.
+**Status: v0.14 retention-stub placement refinement.** The v0.11 curved fit-gauge geometry was physically confirmed to fit well. Both 4 × 5 × 2 mm trapezoidal retention stubs on the inside **short end walls** have been slid **0.55 mm straight toward the open lip**. Their tops are now **2.00 mm below the opening**. Each occupies **Z=5.70–10.70 mm**, centered at X=0 with unchanged width, ramp geometry, projection and Y position. The 12.5 mm midpoint interior width, 21.5 mm cavity length, concentric side arcs, exterior, boss, and unchanged stub-free fit gauge are preserved. Retention has not yet been physically tested.
 
 ## Project
 
@@ -46,8 +46,9 @@ The full cap has two symmetric raised trapezoid-profile grips at the center of t
 - `stub_projection = 2.0` mm — peak projection into the rail space (Y).
 - `stub_lead_ramp = 2.0` mm, `stub_trailing_ramp = 1.0` mm — the leading slope runs from the opening side, followed by a 2 mm flat plateau and a 1 mm trailing slope.
 - `stub_embed = 0.20` mm — hidden overlap into each end wall to form a solid joint, *not* an extra protrusion.
+- `stub_top_clearance = 2.0` mm — fixed gap from the open lip to the top of each retention stub.
 
-Each stub is **centered vertically on the interior wall face**: the face spans z=2.6–12.7 mm, midpoint z=7.65 mm, so the 5 mm-long stub occupies **z=5.15–10.15 mm** with **2.55 mm clearance at each vertical end**. Both stubs remain horizontally centered at X=0. Two opposed 2 mm projections reduce the free Y opening **locally** by up to 4 mm: test gently, do not force it if the rail resists. The `fit_gauge` continues to check only the originally fitted cavity silhouette and does not include stubs.
+Each stub is positioned **2.00 mm below the open lip**, using `stub_top_clearance = 2.0` mm. Because the opening is at Z=12.70 mm and each stub is 5.00 mm long, the stubs now occupy **Z=5.70–10.70 mm** (center Z=8.20 mm), precisely **0.55 mm higher** than v0.13. Both remain horizontally centered at X=0; their shape and Y position are unchanged. Two opposed 2 mm projections reduce the free Y opening **locally** by up to 4 mm: test gently, do not force it if the rail resists. The `fit_gauge` continues to check only the originally fitted cavity silhouette and does not include stubs.
 
 ## Open / print
 
