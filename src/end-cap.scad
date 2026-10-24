@@ -1,10 +1,9 @@
 // Miniblind bottom-rail protective end cap
 // Copyright (C) 2026. Released under GPL-3.0-or-later.
 // X = width; Y = length; Z = depth. Z=0 is the closed end.
-// v0.11: larger-radius circular sides, still truly concentric.
-// Interior center 12.5mm; each long wall 1.5mm radially.
-// Outside MAXIMUM width and LENGTH unchanged; end width increases.
-// Prototype awaits physical fit verification.
+// v0.12: fit-confirmed curved cavity remains unchanged.
+// Add two trapezoidal, gradually engaging short-end retention stubs.
+// The old fit gauge remains unchanged and has no stubs.
 
 /* [Configuration] */
 mode = "final"; // [final,fit_gauge]
@@ -34,6 +33,15 @@ boss_height = 7.1;
 bore_diameter = 2.35;
 bore_depth = 5.0;
 
+/* [Retention stubs (mm)] */
+include_retention_stubs = true;
+stub_width = 4.0;           // X: across the inner short end wall
+stub_length = 5.0;          // Z: from inner floor toward open mouth
+stub_projection = 2.0;      // Y: maximum protrusion toward rail
+stub_lead_ramp = 2.0;       // Z: slope encountered first during insertion
+stub_trailing_ramp = 1.0;   // Z: slope toward the closed inner floor
+stub_embed = 0.20;          // Hidden overlap into wall, not extra projection
+
 /* [Gauge (mm)] */
 gauge_depth = 5.0;
 
@@ -55,6 +63,12 @@ assert(face_chamfer >= 0 && face_chamfer < face);
 assert(boss_diameter > bore_diameter && bore_depth > 0);
 assert(boss_height > bore_depth && boss_height <= cap_depth-face);
 assert(gauge_depth > 0 && gauge_depth <= cap_depth);
+assert(stub_width > 0 && stub_width < 2*inside_half_width(inside_length/2));
+assert(stub_projection > 0 && stub_projection < inside_length/2);
+assert(stub_length > 0 && stub_length <= cap_depth-face);
+assert(stub_lead_ramp > 0 && stub_trailing_ramp > 0);
+assert(stub_lead_ramp + stub_trailing_ramp < stub_length);
+assert(stub_embed > 0 && stub_embed < (length-inside_length)/2);
 
 // Each exterior long side is one genuine circular arc (constant radius).
 // End width (~12.62mm at R=55) derives from the circular radius.
@@ -114,6 +128,29 @@ module outer_body() {
     }
 }
 
+// Two centered grips on the INSIDE faces of the short Y-end walls.
+// Side profile along Z is a trapezoid (/---\\), not a square block.
+// As the cap slides on from the open mouth (high Z), the rail first
+// meets the longer leading ramp, then the short raised plateau, then
+// the shorter slope toward the closed floor (low Z).
+// The local polygon axes are (Y,Z); its extrusion axis maps to X.
+module retention_stubs() {
+    for (end_sign=[-1,1])
+        multmatrix([[0,0,1,0],
+                    [1,0,0,0],
+                    [0,1,0,0],
+                    [0,0,0,1]])
+            linear_extrude(height=stub_width, center=true)
+                polygon(points=[
+                    [end_sign*(inside_length/2 + stub_embed), face],
+                    [end_sign*(inside_length/2), face],
+                    [end_sign*(inside_length/2 - stub_projection), face+stub_trailing_ramp],
+                    [end_sign*(inside_length/2 - stub_projection), face+stub_length-stub_lead_ramp],
+                    [end_sign*(inside_length/2), face+stub_length],
+                    [end_sign*(inside_length/2 + stub_embed), face+stub_length]
+                ]);
+}
+
 module full_cap() {
     difference() {
         union() {
@@ -126,6 +163,8 @@ module full_cap() {
             if (include_boss)
                 translate([0,0,face])
                     cylinder(h=boss_height, d=boss_diameter);
+            if (include_retention_stubs)
+                retention_stubs();
         }
         if (include_boss)
             translate([0,0,face+boss_height-bore_depth])
