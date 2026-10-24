@@ -84,3 +84,26 @@ Locally rendered 5 mm fit-gauge STL cross-section (one closed mesh):
 - Outside dimensions and center boss: unchanged
 
 The new gauge and full-cap STL each render as a watertight, single connected body. A successful physical fit has **not** been established; inspect contour visually before printing another test.
+
+## Parallel sidewall rebuild — October 24, 2026
+
+**Supersedes the independently modeled exterior**, which produced visibly diverging inner/outer shapes despite several changes to the inside spline. The interior three-station measurements remain the controlling geometry. **The outer outline is now generated from exactly the same sampled interior width curve.** At each normalized station, each outer side is widened by `side_wall = 1.25 mm`. The exterior is also stretched along the length axis to preserve the original 25.0 mm overall length and its stronger 1.75 mm end walls. Both profiles retain their independently controllable corner fillets.
+
+This intentionally changes the *exterior taper*; it does **not** change the measured interior opening. The shape is visually parallel, but the slight difference in the length-axis scale means it is not a mathematically constant normal offset.
+
+The earlier assertion that a parallel outer and measured opening were incompatible only applied to the *previous, independently fixed* outer profile. Once the outer contour is derived from the measured interior, that conflict disappears.
+
+### Locally rendered OpenSCAD mesh inspection (5 mm fit gauge)
+
+| Feature | Measured mesh |
+|---|---:|
+| Interior length | 21.50 mm |
+| Interior width at end | ~10.03 mm at 0.005 mm inward |
+| Interior width at 5 mm inward | ~11.50 mm |
+| Interior width at middle | ~13.00 mm |
+| Exterior length | 25.00 mm |
+| Exterior maximum width | ~15.50 mm |
+| Minimum wall in XY section | ~1.25 mm |
+| Exterior width at 5 mm inward from *interior* end | ~14.25 mm |
+
+The gauge and full cap are each watertight single solids in local OpenSCAD mesh testing. These are measurements of computer-generated geometry, **not evidence of successful fit on the actual metal rail**. Review the new sidewall comparison graphic before printing.
