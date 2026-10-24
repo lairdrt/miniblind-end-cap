@@ -153,3 +153,24 @@ User reports v0.8 nearly fits and asks to increase both curved side walls **INWA
 - The change is accomplished **once** via `inside_center_width = 11.5`: the existing `side_wall=(outer_width_center-inside_center_width)/2` and `inside_side_radius=outer_side_radius-side_wall` equations produce the requested +0.75 mm per side automatically. No separate wall modifier.
 
 The new gauge requires physical testing. The narrower opening at the ends is an intentional geometric consequence of inwardly offset concentric circular sides; do not confuse this with changing end-wall length.
+
+
+## V0.10 partial rollback of inward thickening — October 24, 2026 (ACTIVE)
+
+Physical feedback: v0.9 curved walls (2.00 mm radial thickness) were **too thick**. Revert 0.25 mm of the previous +0.75 mm inward change on **each** curved side. This is not a reduction of the full 0.75 mm, and not 0.25 mm total shared between both walls.
+
+| Feature | v0.9 | v0.10 |
+|---|---:|---:|
+| Curved radial wall thickness per side | 2.00 mm | **1.75 mm** |
+| Interior center width | 11.50 mm | **12.00 mm** |
+| Interior circular radius | 43.518 mm | **43.768 mm** |
+| Computed interior end width | ~8.80 mm | **~9.32 mm** |
+| Computed interior width 5 mm inward | ~10.74 mm | **~11.24 mm** |
+| Interior length | 21.50 mm | **unchanged** |
+| Exterior maximum width | 15.50 mm | **unchanged** |
+| Exterior length | 25.00 mm | **unchanged** |
+| Exterior side radius | 45.518 mm | **unchanged** |
+
+The only geometric source parameter modified is `inside_center_width` from 11.5 to **12.0**. Existing formulas then derive `side_wall = 1.75` and `inside_side_radius = 43.768`. No independent extra offset is applied. All other feature geometry including center boss, closed face, end walls, fillets, and fit-gauge height stays as v0.9.
+
+These widths are predicted by the parametric circular geometry; the new fit remains to be confirmed physically.
