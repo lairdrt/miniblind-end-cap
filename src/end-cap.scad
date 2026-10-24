@@ -1,8 +1,9 @@
 // Miniblind bottom-rail protective end cap
 // Copyright (C) 2026. Released under GPL-3.0-or-later.
 // X = width; Y = length; Z = depth. Z=0 is the closed end.
-// v0.8: concentric constant-radius circular arcs on inside and outside.
-// Only the center interior width controls the curve; physical fit unverified.
+// v0.9: thicken each curved wall by 0.75 mm INWARD only.
+// Outer envelope/circular radius unchanged, 21.5mm cavity length preserved.
+// Concentric circular arcs remain; physical fit not yet confirmed.
 
 /* [Configuration] */
 mode = "final"; // [final,fit_gauge]
@@ -19,7 +20,7 @@ face_chamfer = 0.45;
 
 /* [Concentric interior arc (mm)] */
 inside_length = 21.5;
-inside_center_width = 13.0; // ONLY measured width constraint
+inside_center_width = 11.5; // Inward +0.75mm wall/side; was 13.0mm in v0.8
 inside_corner_radius = 0.15;
 
 /* [Strength (mm)] */
@@ -63,6 +64,8 @@ function outer_half_width(y) =
     outer_circle_cx + sqrt(outer_side_radius*outer_side_radius-y*y);
 
 // Two truly concentric arcs, with constant normal separation on sides.
+// New derived wall thickness = (15.5-11.5)/2 = 2.0mm.
+// Do NOT subtract another 0.75mm: the single center-width change suffices.
 side_wall = (outer_width_center-inside_center_width)/2;
 inside_side_radius = outer_side_radius-side_wall;
 function inside_half_width(y) =
