@@ -107,3 +107,15 @@ The earlier assertion that a parallel outer and measured opening were incompatib
 | Exterior width at 5 mm inward from *interior* end | ~14.25 mm |
 
 The gauge and full cap are each watertight single solids in local OpenSCAD mesh testing. These are measurements of computer-generated geometry, **not evidence of successful fit on the actual metal rail**. Review the new sidewall comparison graphic before printing.
+
+## Exterior circular-arc revision — October 24, 2026
+
+User observed that the outside bow still deforms, because the model stretched a measured interior spline to produce the outer shape. This **v0.7 revision supersedes the shared-spline exterior**: each long exterior side is now ONE geometric circle with fixed, editable radius `outer_side_radius = 45.518 mm`. The exterior center width remains 15.5 mm; end width is computed from circle geometry (~12.0 mm at ±12.5 mm from the center), plus small independent corner fillets. The complete outside length remains 25 mm. Default source mode remains `final`.
+
+Formula for the right exterior side (`y` from the center):
+`x(y) = outer_width_center/2 - R + sqrt(R² - y²)`.
+The left side is its mirror. Thus the long side's curvature is constant (1/R), unlike the previous independently stretched spline.
+
+**Constraint:** A concentric circular inset with 13.0 mm middle width and 10.0 mm end width over a 21.5 mm length would predict 12.15 mm at 5 mm from the end. The user measured 11.5 mm there. Therefore v0.7 fixes the constant-radius OUTSIDE and retains the measured three-station inside contour separately, giving smooth but variable side-wall thickness. A truly constant-thickness offset would require revisiting at least one measured station or changing the geometric interpretation. Do not describe the complete interior and exterior as exactly parallel.
+
+OpenSCAD 2021.01 rendered the local full part and 5 mm fit gauge successfully. Trimesh inspection: both are one watertight component, external X bounds ±7.75 mm, Y ±12.5 mm, Z 0–12.7 mm (full) or 0–5 mm (gauge). The new outside radius has not been visually or physically accepted by the user yet.
