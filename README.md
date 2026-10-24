@@ -49,7 +49,7 @@ The complete end cap uses the same circle centers for its inner and outer long s
 
 ## Retention stubs (full cap only)
 
-The full cap has two symmetric raised trapezoid-profile grips at the center of the inner **short-end walls**, Y = ±10.75 mm, not on the long curved sidewalls. A gentle `/---\\` side profile allows the rail to meet the stub gradually when the cap is pushed on. Parameters in `src/end-cap.scad`:
+The full cap has two symmetric raised trapezoid-profile grips, each **horizontally centered** on an inner short-end wall at Y = ±10.75 mm, not on the long curved sidewalls. A gentle `/---\\` side profile allows the rail to meet the stub gradually when the cap is pushed on. Parameters in `src/end-cap.scad`:
 
 - `include_retention_stubs = true` — enable/disable both stubs (full cap only).
 - `stub_width = 4.0` mm — across each end wall (X).
@@ -69,9 +69,11 @@ On the Bambu P1S, an initial PLA test can use 0.4 mm nozzle, 0.20 mm layers, 3�
 
 A PETG final part or bumper on the windowsill may improve impact survival, but that is not yet tested.
 
-## Next measurements
+## Project status
 
-The curved-profile gauge is physically fit-confirmed. Inspect the new trapezoidal retention stubs in the complete end cap before printing. Test the full cap gently for snap/retention; adjust only the stub dimensions if fit changes are needed. Report where it contacts or remains loose along the sidewalls. If the profile fits, measure/verify insertion depth and center-boss engagement on the complete cap. Keep source, documentation and generated exports aligned when adjusting parameters.
+**Complete / accepted for the tested blind.** The curved cavity and final retention-tab placement were physically fit-tested. No further geometry changes are planned. The editable OpenSCAD source, printable STL/3MF exports, dimensions, and rendered images are kept in this repository.
+
+For another blind or another filament, test a fresh print gently before forcing the fit; changes in rail profiles and printer tolerances may require a separate revision.
 
 ## Git / licensing
 
