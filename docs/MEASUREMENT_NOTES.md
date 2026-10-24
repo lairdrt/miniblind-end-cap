@@ -189,3 +189,20 @@ The previous exterior and interior shared circle center remains the architecture
 - Circle-predicted inside width at the ends: **~10.32 mm**; at 5 mm inward: **~11.88 mm**; at midpoint: **12.50 mm**. The end/intermediate values are predictions, not separately fitted constraints.
 
 The user approved this direction as a trial. Verify generated STL measurements and inspect visually before physical fit; no new test result has been received.
+
+
+## V0.12 interior short-end retention stubs — October 24, 2026 (ACTIVE)
+
+**Confirmed fit checkpoint:** User physically tested v0.11 fit gauge and reported "Fits good". Preserve the established **12.5 mm center cavity width**, concentric circular sidewalls (outer R55.0, inner R53.5), interior length **21.5 mm**, and original 25 × 15.5 × 12.7 mm exterior envelope without modification.
+
+User now requests **one friction/retention stub centered on the inner face of EACH short end wall** (not on the long curved sidewalls). Both stubs are the same, symmetric, and feature-flagged:
+
+- `include_retention_stubs = true` for the default full cap.
+- `stub_width = 4.0 mm` along X, centered at X=0 on each short inner end wall.
+- `stub_length = 5.0 mm` along Z (insertion/depth axis), immediately above the closed inner floor, starting at `z = face = 2.6 mm` and ending at `z = 7.6 mm`. This is the user's "down the face of the wall toward the filled-in cap end" direction.
+- `stub_projection = 2.0 mm` in Y, protruding into the cavity (toward Y=0).
+- `stub_embed = 0.20 mm` in Y behind the wall face, for a reliable solid union. This extra embedded portion is NOT an additional in-cavity projection.
+- The short inner walls are at Y=±(inside_length/2)=±10.75 mm. Thus the stub faces project to Y=±8.75 mm in their local 4 mm wide X bands. This intentionally reduces the free opening along Y by **4.0 mm locally**, even though the nominal cavity length stays 21.5 mm elsewhere.
+- The proven v0.11 open-ring `fit_gauge` remains **unchanged and stub-free**; only `mode="final"` receives retention features.
+- `include_boss`, floor/face, bore and all other parameters remain as before.
+- Rectangular stubs are intentionally simple; installation pressure and rail clearance have not been tested. **2 mm projection on two opposed walls is relatively aggressive for a rigid rail; inspect and test the full cap carefully, without forcing it.** The projection is independently parametric for fit revisions.
