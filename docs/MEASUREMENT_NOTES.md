@@ -222,3 +222,19 @@ User confirms v0.12 trapezoidal retention stubs are **too low** on the interior 
 - Symmetric Y positions remain **±10.75 mm** at the short walls; 2.00 mm maximum projection toward Y=0, 0.20 mm union overlap into the wall.
 - The 4 × 5 × 2 mm stub dimensions, outer shell, confirmed 12.5 mm centered curved cavity, 21.5 mm inner length, boss, and existing unchanged/stub-free fit gauge all remain exactly as before.
 - Physical retention/installation has not yet been tested; verify visually and install gently because two 2 mm opposed projections may exert significant pressure.
+
+
+## V0.14 move the two short-end retention stubs toward the lip — October 24, 2026 (ACTIVE)
+
+User directed a **pure vertical translation** of both v0.13 stubs until their top edges are **2.00 mm below the open lip**. Do not alter horizontal centering, either short-end Y position, stub shape, size, ramp orientation, inward projection, overlap, shell, center boss, or the fit-confirmed hollow profile.
+
+- Cap opening is at **Z=12.70 mm**. The top edge of each stub is therefore **Z=10.70 mm**.
+- The two 5.00 mm-long stubs now extend **Z=5.70 to 10.70 mm** (center **Z=8.20 mm**).
+- From v0.13's Z=5.15–10.15 mm, this is a **+0.55 mm displacement along +Z toward the open mouth**, nothing else.
+- Horizontal center is still **X=0**. Stub width along X remains 4.00 mm.
+- Short end walls remain at **Y=±10.75 mm**, with 2.00 mm maximum inward projection and unchanged 0.20 mm embedding.
+- Open-mouth-side 2.00 mm lead-in, 2.00 mm plateau, closed-side 1.00 mm trailing ramp stay unchanged.
+- The shape-fitted v0.11/v0.13 hollow opening remains **12.50 mm at midpoint** with 21.50 mm inner length; outside is still 25.00 × 15.50 × 12.70 mm.
+- The `fit_gauge` is explicitly unchanged and stub-free; only `mode="final"` places stubs.
+
+The stub's lip clearance is a parametric `stub_top_clearance = 2.0`; its starting Z is `cap_depth - stub_top_clearance - stub_length`. Physical retention has not yet been verified.
