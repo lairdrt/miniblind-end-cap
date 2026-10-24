@@ -1,7 +1,8 @@
 // Miniblind bottom-rail protective end cap
 // Copyright (C) 2026. Released under GPL-3.0-or-later.
 // X = width; Y = length; Z = depth. Z=0 is the closed end.
-// Three physical interior width stations; not yet fit-validated.
+// Smooth curved interior follows exterior tangents and fits measured stations.
+// Real-world rail fit is still unverified.
 
 /* [Configuration] */
 mode = "final"; // [final,fit_gauge]
@@ -24,7 +25,7 @@ inside_end_width = 10.0;     // 0 mm inward from either end
 inside_station = 5.0;       // Distance inward from either end
 inside_station_width = 11.5;
 inside_center_width = 13.0; // At 10.75 mm inward from either end
-inside_corner_radius = 0.40;
+inside_corner_radius = 0.15;
 
 /* [Strength (mm)] */
 face = 2.6;
@@ -77,34 +78,32 @@ module outer_outline() {
     shaped_outline(length, width_middle, width_ends, corner_radius);
 }
 
-// Two cubic Hermite segments per half, continuous first derivative
-// through the 5 mm measurement station and zero slope at the center.
-// The measured widths are controlling dimensions, not extra clearance.
-function hermite_width(w0, w1, m0, m1, span, u) =
-    (2*pow(u,3)-3*pow(u,2)+1)*w0
-    + (pow(u,3)-2*pow(u,2)+u)*span*m0
-    + (-2*pow(u,3)+3*pow(u,2))*w1
-    + (pow(u,3)-pow(u,2))*span*m1;
+// Each long inner wall uses ONE smooth quartic profile, not two
+// joined interpolation segments. This retains the three measured widths.
+// Interior tangents follow the outer edge at both ends and the center;
+// exact constant-thickness offsets would conflict with the 5mm width.
+function smooth_step(u) = u*u*(3-2*u);
+function exterior_inward_slope_at_y(y) =
+    (width_middle-width_ends)*side_taper*side_power
+      *pow(2/length,side_power)*pow(y,side_power-1)
+      *pow(max(0.0001,1-pow(2*y/length,side_power)),side_taper-1);
+
+function inside_target_width(t) =
+    let(h=inside_length/2,
+        // A small compensation for 0.15mm rounded interior corners.
+        // Calibrated against rendered STL terminal-edge width.
+        end_nominal=inside_end_width + 1.40*inside_corner_radius,
+        u=max(0,min(1,t/h)),
+        p=inside_station/h,
+        slope=exterior_inward_slope_at_y(h),
+        a=slope*h,
+        base=end_nominal+(inside_center_width-end_nominal)*smooth_step(p),
+        b=(inside_station_width-base-a*p*pow(1-p,2))/(p*p*pow(1-p,2)))
+    end_nominal+(inside_center_width-end_nominal)*smooth_step(u)
+    +a*u*pow(1-u,2)+b*pow(u,2)*pow(1-u,2);
 
 function measured_inside_width(y) =
-    let(
-        h = inside_length/2,
-        t = max(0, min(h, h-abs(y))),
-        // Compensate for 0.4 mm corner rounding, keeping ~10 mm
-        // of actual terminal clear width after the offset operation.
-        effective_end_width = inside_end_width + 1.8*inside_corner_radius,
-        first_slope = (inside_station_width-effective_end_width)/inside_station,
-        second_span = h-inside_station,
-        second_slope = (inside_center_width-inside_station_width)/second_span,
-        at_station_slope = (first_slope + second_slope)/2
-    )
-    t <= inside_station
-    ? hermite_width(effective_end_width, inside_station_width,
-                    first_slope, at_station_slope,
-                    inside_station, t/inside_station)
-    : hermite_width(inside_station_width, inside_center_width,
-                    at_station_slope, 0,
-                    second_span, (t-inside_station)/second_span);
+    inside_target_width(inside_length/2-abs(y));
 
 module cavity_outline() {
     offset(r=inside_corner_radius) offset(delta=-inside_corner_radius)
@@ -117,7 +116,6 @@ module cavity_outline() {
                 [-measured_inside_width(y)/2, y ]]
         ));
 }
-
 
 module outer_body() {
     if (face_chamfer > 0) {
