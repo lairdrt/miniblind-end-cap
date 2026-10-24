@@ -2,7 +2,7 @@
 
 Parametric OpenSCAD replacement of the protective plastic cap on a miniblind bottom rail. The originals fracture when the blind contacts a windowsill.
 
-**Status: v0.12 retention-stub prototype.** The v0.11 gauge **fits well in the real blind rail**, according to the user's physical test. Its successful 12.5 mm interior midpoint, circular sidewalls (R55.0 outer, R53.5 inner), 21.5 mm interior length, and 25 × 15.5 mm external envelope are **unchanged**. The full cap now adds one centered trapezoidal retention stub on the inside of each SHORT end wall: **4 mm across × 5 mm along depth × 2 mm maximum inward projection**. The opening-side slope gives a gradual press fit rather than an abrupt orthogonal obstruction. The retained gauge remains unchanged and stub-free. Stub retention and full-cap engagement still need physical testing.
+**Status: v0.13 centered retention-stub prototype.** The v0.11 curved fit gauge was physically verified to fit well. The two trapezoidal 4 × 5 × 2 mm retention stubs on the full cap's *short interior end walls* are now centered **both horizontally (X=0) and vertically (Z=7.65 mm)** on the available wall face. Each stub occupies Z=5.15–10.15 mm, leaving 2.55 mm above and below. The 12.5 mm interior center width, 21.5 mm inner length, concentric curved wall profile, 25 × 15.5 mm outside envelope, center boss and stub-free fit gauge are unchanged. The new stub placement still requires a physical fit test.
 
 ## Project
 
@@ -47,7 +47,7 @@ The full cap has two symmetric raised trapezoid-profile grips at the center of t
 - `stub_lead_ramp = 2.0` mm, `stub_trailing_ramp = 1.0` mm — the leading slope runs from the opening side, followed by a 2 mm flat plateau and a 1 mm trailing slope.
 - `stub_embed = 0.20` mm — hidden overlap into each end wall to form a solid joint, *not* an extra protrusion.
 
-The front of each stub is between `z=face=2.6 mm` and `z=7.6 mm`. Two opposed 2 mm projections reduce the free Y opening **locally** by up to 4 mm: test gently, do not force it if the rail resists. The `fit_gauge` continues to check only the originally fitted cavity silhouette and does not include stubs.
+Each stub is **centered vertically on the interior wall face**: the face spans z=2.6–12.7 mm, midpoint z=7.65 mm, so the 5 mm-long stub occupies **z=5.15–10.15 mm** with **2.55 mm clearance at each vertical end**. Both stubs remain horizontally centered at X=0. Two opposed 2 mm projections reduce the free Y opening **locally** by up to 4 mm: test gently, do not force it if the rail resists. The `fit_gauge` continues to check only the originally fitted cavity silhouette and does not include stubs.
 
 ## Open / print
 
