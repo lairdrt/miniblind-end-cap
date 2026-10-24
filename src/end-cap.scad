@@ -1,9 +1,9 @@
 // Miniblind bottom-rail protective end cap
 // Copyright (C) 2026. Released under GPL-3.0-or-later.
 // X = width; Y = length; Z = depth. Z=0 is the closed end.
-// v0.12: fit-confirmed curved cavity remains unchanged.
-// Add two trapezoidal, gradually engaging short-end retention stubs.
-// The old fit gauge remains unchanged and has no stubs.
+// v0.13: place each retention stub at the center of its inner short wall.
+// X = 0 and Z = midpoint between inner floor and opening.
+// Fit-confirmed curved cavity, outside, ramps and gauge unchanged.
 
 /* [Configuration] */
 mode = "final"; // [final,fit_gauge]
@@ -36,11 +36,13 @@ bore_depth = 5.0;
 /* [Retention stubs (mm)] */
 include_retention_stubs = true;
 stub_width = 4.0;           // X: across the inner short end wall
-stub_length = 5.0;          // Z: from inner floor toward open mouth
+stub_length = 5.0;          // Z: height along inner short end wall
 stub_projection = 2.0;      // Y: maximum protrusion toward rail
 stub_lead_ramp = 2.0;       // Z: slope encountered first during insertion
 stub_trailing_ramp = 1.0;   // Z: slope toward the closed inner floor
 stub_embed = 0.20;          // Hidden overlap into wall, not extra projection
+// Center the 5 mm stub within the full (cap_depth-face) inner wall height.
+stub_start_z = (face + cap_depth - stub_length)/2;
 
 /* [Gauge (mm)] */
 gauge_depth = 5.0;
@@ -69,6 +71,7 @@ assert(stub_length > 0 && stub_length <= cap_depth-face);
 assert(stub_lead_ramp > 0 && stub_trailing_ramp > 0);
 assert(stub_lead_ramp + stub_trailing_ramp < stub_length);
 assert(stub_embed > 0 && stub_embed < (length-inside_length)/2);
+assert(stub_start_z >= face && stub_start_z+stub_length <= cap_depth);
 
 // Each exterior long side is one genuine circular arc (constant radius).
 // End width (~12.62mm at R=55) derives from the circular radius.
@@ -133,6 +136,9 @@ module outer_body() {
 // As the cap slides on from the open mouth (high Z), the rail first
 // meets the longer leading ramp, then the short raised plateau, then
 // the shorter slope toward the closed floor (low Z).
+// Horizontal center X=0 (centered extrusion). Vertical center Z=(face+cap_depth)/2.
+// Stub extends stub_start_z .. stub_start_z+stub_length with equal gaps
+// above and below: 5.15 .. 10.15 mm, 2.55 mm at both ends.
 // The local polygon axes are (Y,Z); its extrusion axis maps to X.
 module retention_stubs() {
     for (end_sign=[-1,1])
@@ -142,12 +148,12 @@ module retention_stubs() {
                     [0,0,0,1]])
             linear_extrude(height=stub_width, center=true)
                 polygon(points=[
-                    [end_sign*(inside_length/2 + stub_embed), face],
-                    [end_sign*(inside_length/2), face],
-                    [end_sign*(inside_length/2 - stub_projection), face+stub_trailing_ramp],
-                    [end_sign*(inside_length/2 - stub_projection), face+stub_length-stub_lead_ramp],
-                    [end_sign*(inside_length/2), face+stub_length],
-                    [end_sign*(inside_length/2 + stub_embed), face+stub_length]
+                    [end_sign*(inside_length/2 + stub_embed), stub_start_z],
+                    [end_sign*(inside_length/2), stub_start_z],
+                    [end_sign*(inside_length/2 - stub_projection), stub_start_z+stub_trailing_ramp],
+                    [end_sign*(inside_length/2 - stub_projection), stub_start_z+stub_length-stub_lead_ramp],
+                    [end_sign*(inside_length/2), stub_start_z+stub_length],
+                    [end_sign*(inside_length/2 + stub_embed), stub_start_z+stub_length]
                 ]);
 }
 
