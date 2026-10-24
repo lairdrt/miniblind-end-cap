@@ -207,3 +207,18 @@ User now requests **one friction/retention stub centered on the inner face of EA
 - `include_boss`, floor/face, bore and all other parameters remain as before.
 - **User-requested ramped `/---\\` profile:** Each stub is a trapezoidal prism (not a square block), with a 2.0 mm sloped lead-in encountered first from the cap opening, a 2.0 mm full-height flat gripping plateau, and a 1.0 mm trailing ramp toward the closed face. Their summed Z length is still 5.0 mm; maximum in-cavity projection remains 2.0 mm.
 - The ramp makes initial insertion more gradual, but **2 mm projection on two opposed walls is still an aggressive press fit for a rigid rail**. Test carefully without forcing or breaking the rail/cap. `stub_projection`, `stub_lead_ramp`, and `stub_trailing_ramp` are independently adjustable.
+
+
+## V0.13 stub placement correction — October 24, 2026 (ACTIVE)
+
+User confirms v0.12 trapezoidal retention stubs are **too low** on the interior short-end wall face when viewed from the open mouth. Center EACH stub both horizontally and vertically on the inside wall face.
+
+- X center: **0.00 mm**, unchanged, centered across the inner short wall.
+- Vertical wall face spans **Z=2.60 mm** (inner closed floor) through **Z=12.70 mm** (open mouth). Total inner wall height = **10.10 mm**.
+- The vertical mid-height of the wall is therefore **Z=7.65 mm**.
+- 5.00 mm-long retention stub centered on that face occupies **Z=5.15–10.15 mm**, leaving **2.55 mm space at both the open and closed ends**.
+- Compared to v0.12's **Z=2.60–7.60 mm**, this moves both retention stubs **+2.55 mm toward the open end**. It does **not** increase projection or length.
+- Same ramp orientation: from the opening (Z high), 2.00 mm lead-in slope, 2.00 mm raised plateau, 1.00 mm trailing slope toward the floor. Plateau occupies **Z=6.15–8.15 mm**.
+- Symmetric Y positions remain **±10.75 mm** at the short walls; 2.00 mm maximum projection toward Y=0, 0.20 mm union overlap into the wall.
+- The 4 × 5 × 2 mm stub dimensions, outer shell, confirmed 12.5 mm centered curved cavity, 21.5 mm inner length, boss, and existing unchanged/stub-free fit gauge all remain exactly as before.
+- Physical retention/installation has not yet been tested; verify visually and install gently because two 2 mm opposed projections may exert significant pressure.
