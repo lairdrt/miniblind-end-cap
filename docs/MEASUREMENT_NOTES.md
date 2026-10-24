@@ -174,3 +174,18 @@ Physical feedback: v0.9 curved walls (2.00 mm radial thickness) were **too thick
 The only geometric source parameter modified is `inside_center_width` from 11.5 to **12.0**. Existing formulas then derive `side_wall = 1.75` and `inside_side_radius = 43.768`. No independent extra offset is applied. All other feature geometry including center boss, closed face, end walls, fillets, and fit-gauge height stays as v0.9.
 
 These widths are predicted by the parametric circular geometry; the new fit remains to be confirmed physically.
+
+
+## V0.11 wider curved sides with fixed 12.5 mm midpoint — October 24, 2026 (ACTIVE)
+
+Following the v0.10 gauge feedback, the user confirmed the proposed interpretation: **increase both circular side radii to open the sides near the ends**, while keeping the inner and outer arcs concentric/parallel and setting the interior center width to **12.50 mm**. This supersedes v0.10's 12.00 mm center target.
+
+The previous exterior and interior shared circle center remains the architecture. Two source parameters change together:
+- `inside_center_width`: 12.00 -> **12.50 mm**, thus radial wall thickness 1.75 -> **1.50 mm** per curved side.
+- `outer_side_radius`: 45.518 -> **55.000 mm**, a modest larger-radius / flatter circular bow that opens side clearances as one moves away from the midpoint.
+- Derived inner radius: **53.500 mm**. Both arcs remain concentric and constant-radius, with **1.50 mm radial separation**.
+- Unchanged: outside overall length **25.0 mm**, max outside width at midpoint **15.5 mm**, inside overall length **21.5 mm**, depth **12.7 mm**, end/inside fillets, boss, face thickness, full-model default and gauge depth.
+- **The exterior widths away from the center will change**, intentionally: outside width at the ends grows from ~12.00 to **~12.62 mm**. This does not change overall max width or length.
+- Circle-predicted inside width at the ends: **~10.32 mm**; at 5 mm inward: **~11.88 mm**; at midpoint: **12.50 mm**. The end/intermediate values are predictions, not separately fitted constraints.
+
+The user approved this direction as a trial. Verify generated STL measurements and inspect visually before physical fit; no new test result has been received.
