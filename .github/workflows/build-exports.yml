@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'src/**'
+      - '.github/workflows/build-exports.yml'
   workflow_dispatch:
 
 permissions:
@@ -15,7 +16,7 @@ concurrency:
 jobs:
   exports:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         timeout-minutes: 2
@@ -23,7 +24,7 @@ jobs:
         timeout-minutes: 5
         run: |
           sudo timeout 180s apt-get update -qq
-          sudo timeout 180s apt-get install -y openscad
+          sudo timeout 180s apt-get install -y openscad xvfb
       - name: Render full cap and 5mm fit gauge
         timeout-minutes: 4
         run: |
@@ -33,15 +34,43 @@ jobs:
           timeout 120s openscad -o exports/end-cap-geometry.3mf -D 'mode="final"' src/end-cap.scad
           timeout 120s openscad -o exports/fit-gauge-geometry.3mf -D 'mode="fit_gauge"' src/end-cap.scad
           for f in exports/end-cap.stl exports/fit-gauge.stl exports/end-cap-geometry.3mf exports/fit-gauge-geometry.3mf; do test -s "$f"; done
+      - name: Render three OpenSCAD views of the final cap
+        timeout-minutes: 4
+        env:
+          QT_QPA_PLATFORM: xcb
+        run: |
+          mkdir -p docs/images
+          # Images come from the exact parametric CAD model, not a redraw.
+          xvfb-run -a -s '-screen 0 1280x960x24' \
+            openscad -o docs/images/end-cap-isometric.png -D 'mode="final"' \
+            --camera=0,0,0,55,0,35,80 --autocenter --viewall \
+            --imgsize=960,720 --projection=o --colorscheme=Tomorrow --render=true src/end-cap.scad
+          xvfb-run -a -s '-screen 0 1280x960x24' \
+            openscad -o docs/images/end-cap-opening.png -D 'mode="final"' \
+            --camera=0,0,0,0,0,0,80 --autocenter --viewall \
+            --imgsize=960,720 --projection=o --colorscheme=Tomorrow --render=true src/end-cap.scad
+          xvfb-run -a -s '-screen 0 1280x960x24' \
+            openscad -o docs/images/end-cap-closed-face.png -D 'mode="final"' \
+            --camera=0,0,0,140,0,35,80 --autocenter --viewall \
+            --imgsize=960,720 --projection=o --colorscheme=Tomorrow --render=true src/end-cap.scad
+          python3 - <<'PY'
+          import pathlib, struct
+          for name in ('isometric', 'opening', 'closed-face'):
+              file = pathlib.Path(f'docs/images/end-cap-{name}.png')
+              data = file.read_bytes()
+              assert data[:8] == b'\\x89PNG\\r\\n\\x1a\\n' and len(data) > 8000, file
+              assert struct.unpack('>II', data[16:24]) == (960,720), file
+              print(f'{file}: {len(data)} bytes, 960x720')
+          PY
       - name: Commit exports to main
         if: github.ref == 'refs/heads/main'
         timeout-minutes: 2
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add exports/end-cap.stl exports/fit-gauge.stl exports/end-cap-geometry.3mf exports/fit-gauge-geometry.3mf
+          git add exports/end-cap.stl exports/fit-gauge.stl exports/end-cap-geometry.3mf exports/fit-gauge-geometry.3mf docs/images/end-cap-*.png
           if ! git diff --cached --quiet; then
-            git commit -m "build: synchronize printable meshes [skip ci]"
+            git commit -m "build: synchronize printable meshes and OpenSCAD renders [skip ci]"
             # The source change can overlap later documentation edits.
             # Rebase onto main and retry only three times; never force push.
             published=false
