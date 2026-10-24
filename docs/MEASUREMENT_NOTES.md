@@ -64,3 +64,23 @@ The short end has a 0.4 mm radius, so the unrounded underlying input profile mus
 **Rendered local STL cross-section (gauge at z=2.5 mm):** terminal width 9.979 mm, 5.0 mm from either end 11.500 mm, center 13.000 mm; inside length 21.500 mm. Minimum cross-sectional wall thickness measured from the mesh is approximately **1.25 mm**. Both full and gauge STLs were rendered successfully; gauge mesh validated watertight, one body. These are digital measurements, **not a successful physical fit test**.
 
 Next test: try the revised 5 mm gauge and report whether the new profile is tight, loose or snug at the ends, intermediate stations and center. A full cap still requires separate insertion-depth and boss checks.
+
+## Smooth contour correction — October 24, 2026
+
+User's OpenSCAD visual review rejected the two-piece Hermite interior as looking like nearly straight tapered sides rather than the rounded contours in the original reference photograph. The central issue was contour shape, **not** STL watertightness.
+
+The new cavity is one globally smooth quartic width profile per symmetric half, constrained to the physically measured width stations: nominal terminal width 10.0 mm, 11.5 mm at 5.0 mm from either end, 13.0 mm at the center; total interior length 21.5 mm. Unlike the prior piecewise Hermite, it has no join at 5 mm. The end tangent slope is calculated from the unchanged exterior profile at the corresponding Y station; the center tangent is zero for both profiles.
+
+An exactly parallel constant-thickness offset of the existing exterior **cannot also match all three measured widths**. The exterior at 5 mm in from the 21.5 mm interior end is ~14.96 mm across; a 1.25 mm-per-side constant offset would yield ~12.46 mm, versus the measured 11.5 mm. The new contour therefore follows the exterior's tangents while allowing sidewall thickness to change smoothly.
+
+The interior fillet is reduced from an unverified 0.40 mm to 0.15 mm and the source's raw terminal width is compensated by 1.40 times that radius to maintain the *mesh-measured* opening at the terminal edge. This factor is specific to the current OpenSCAD offset construction and should be rechecked if the corner radius changes.
+
+Locally rendered 5 mm fit-gauge STL cross-section (one closed mesh):
+- Inside length: **21.50 mm**
+- Width at the terminal edge: **9.98 mm**
+- Width 5.0 mm from either end: **11.50 mm**
+- Width at center: **13.00 mm**
+- Minimum 2D wall distance: approximately **1.25 mm**
+- Outside dimensions and center boss: unchanged
+
+The new gauge and full-cap STL each render as a watertight, single connected body. A successful physical fit has **not** been established; inspect contour visually before printing another test.
