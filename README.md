@@ -2,7 +2,7 @@
 
 Parametric OpenSCAD replacement of the protective plastic cap on a miniblind bottom rail. The originals fracture when the blind contacts a windowsill.
 
-**Status: v0.6 shared-contour prototype; not physically fit-confirmed.** Both the inside and outside walls now follow the SAME measured bowed width curve, instead of independent profiles. Inside length **21.5 mm**, width **10.0 mm at either end**, **11.5 mm at 5 mm inward**, and **13.0 mm at the center**. The side-wall expansion is **1.25 mm per side** at corresponding normalized stations; the outside remains **25 × 15.5 mm**, with slightly thicker end walls. Inspect the profile before printing.
+**Status: v0.7 constant-radius exterior; fit still unverified.** Both long *exterior* sides now use true circular arcs with a single editable radius **R = 45.518 mm**. The outer envelope is approximately 25 × 15.5 mm, narrowing to 12 mm at the ends. The interior retains the measured opening: length 21.5 mm, widths 10.0 at the ends, 11.5 at 5 mm inward, and 13.0 at the center. These three width stations cannot all lie on a single symmetric circular arc, so the inside curve is independently retained and the walls are not exact constant-thickness offsets. **Inspect the profile before printing.**
 
 ## Project
 
@@ -18,8 +18,9 @@ The six original reference photographs remain in the initial locally downloadabl
 | Feature | Starting value | Basis |
 |---|---:|---|
 | Exterior length `length` | 25.0 | Kept for end-wall strength |
-| Exterior maximum width | 15.5 | Derived from 13.0 mm inside + 2×1.25 mm side wall |
-| `side_wall` | 1.25 per side | Derived outward contour expansion; minimum wall ~1.25 mm |
+| Exterior maximum width `outer_width_center` | 15.5 | Fixed center-envelope target |
+| Constant side arc `outer_side_radius` | 45.518 | Editable circular radius of both exterior sides |
+| Exterior end width | ~12.0 | Derived from circle radius and length |
 | `cap_depth` | 12.7 | Caliper photo |
 | `corner_radius` | 0.65 | Visual estimate |
 | Inside `inside_length` | 21.5 | Latest physical measurement |
@@ -33,7 +34,7 @@ The six original reference photographs remain in the initial locally downloadabl
 | `boss_diameter` | 4.3 | Unverified estimate |
 | `bore_diameter` | 2.35 | Unverified estimate |
 
-The model includes the tapered exterior, separately measured smooth interior profile, reinforced closed face and optional blind-hole center boss. The interior is one smooth curve constrained by the three measured widths. The outside is generated from the same curve, widened by 1.25 mm on both sides and stretched along the length direction to 25 mm; both walls therefore bow together. This is visually parallel, not an exact constant-normal offset. The previous independent exterior profile (and its conflicting 5 mm width) is no longer used. Physical fit, insertion depth, and retention are not yet validated.
+The exterior is constructed from two constant-radius circular arcs and straight end sections with small filleted corners. The measured inside contour is independent because a constant-width circular inset would miss the physical 11.5 mm width at the 5 mm station by approximately 0.75 mm. Wall thickness therefore changes along the sides, although the exterior now has constant curvature. The reinforced closed face and optional hollow center boss are unchanged. Actual fit has not yet been confirmed.
 
 ## Open / print
 
@@ -45,7 +46,7 @@ A PETG final part or bumper on the windowsill may improve impact survival, but t
 
 ## Next measurements
 
-First inspect the new shared-contour inner/outer walls against the original cap, then test the updated fit gauge. Report where it contacts or remains loose along the sidewalls. If the profile fits, measure/verify insertion depth and center-boss engagement on the complete cap. Keep source, documentation and generated exports aligned when adjusting parameters.
+First visually inspect the constant-radius outside arc against the original cap. Confirm the shape before printing the updated fit gauge. Report where it contacts or remains loose along the sidewalls. If the profile fits, measure/verify insertion depth and center-boss engagement on the complete cap. Keep source, documentation and generated exports aligned when adjusting parameters.
 
 ## Git / licensing
 
