@@ -1,8 +1,8 @@
 // Miniblind bottom-rail protective end cap
 // Copyright (C) 2026. Released under GPL-3.0-or-later.
 // X = width; Y = length; Z = depth. Z=0 is the closed end.
-// v0.7: true constant-radius circular arcs on both EXTERIOR long sides.
-// Measured interior opening preserved independently; fit unverified.
+// v0.8: concentric constant-radius circular arcs on inside and outside.
+// Only the center interior width controls the curve; physical fit unverified.
 
 /* [Configuration] */
 mode = "final"; // [final,fit_gauge]
@@ -17,12 +17,9 @@ outer_side_radius = 45.518; // Constant radius of each bowed exterior side
 corner_radius = 0.65;
 face_chamfer = 0.45;
 
-/* [Measured interior profile (mm)] */
+/* [Concentric interior arc (mm)] */
 inside_length = 21.5;
-inside_end_width = 10.0;     // 0 mm inward from either end
-inside_station = 5.0;       // Distance inward from either end
-inside_station_width = 11.5;
-inside_center_width = 13.0; // At 10.75 mm inward from either end
+inside_center_width = 13.0; // ONLY measured width constraint
 inside_corner_radius = 0.15;
 
 /* [Strength (mm)] */
@@ -47,10 +44,10 @@ assert(outer_side_radius > length/2);
 assert(outer_width_center > outer_width_ends && outer_width_ends > 0);
 assert(cap_depth > face && face >= 1.2);
 assert(inside_length > 0 && inside_length < length);
-assert(inside_station > 0 && inside_station < inside_length/2);
-assert(inside_end_width > 0 && inside_end_width < inside_station_width);
-assert(inside_station_width < inside_center_width && inside_center_width < outer_width_center);
-assert(inside_corner_radius >= 0 && inside_corner_radius < inside_end_width/4);
+assert(inside_center_width > 0 && inside_center_width < outer_width_center);
+assert(side_wall > 0.8);
+assert(inside_side_radius > inside_length/2);
+assert(inside_corner_radius >= 0 && inside_corner_radius < inside_center_width/4);
 assert(corner_radius > 0 && corner_radius < outer_width_ends/4);
 assert(face_chamfer >= 0 && face_chamfer < face);
 assert(boss_diameter > bore_diameter && bore_depth > 0);
@@ -65,34 +62,14 @@ outer_width_ends = 2*(outer_circle_cx + sqrt(outer_side_radius*outer_side_radius
 function outer_half_width(y) =
     outer_circle_cx + sqrt(outer_side_radius*outer_side_radius-y*y);
 
-// Smooth measured interior through the three supplied width stations.
-// The three stations cannot lie on a single symmetric circular arc;
-// preserving them requires a varying wall thickness.
-function smooth_step(u) = u*u*(3-2*u);
-// Endpoint slope comes from the interior's measured width change.
-function measured_end_slope() =
-    (inside_station_width-inside_end_width)/inside_station;
+// Two truly concentric arcs, with constant normal separation on sides.
+side_wall = (outer_width_center-inside_center_width)/2;
+inside_side_radius = outer_side_radius-side_wall;
+function inside_half_width(y) =
+    outer_circle_cx + sqrt(inside_side_radius*inside_side_radius-y*y);
 
-function inside_target_width(t) =
-    let(h=inside_length/2,
-        // A small compensation for 0.15mm rounded interior corners.
-        // Calibrated against rendered STL terminal-edge width.
-        end_nominal=inside_end_width + 1.40*inside_corner_radius,
-        u=max(0,min(1,t/h)),
-        p=inside_station/h,
-        slope=measured_end_slope(),
-        a=slope*h,
-        base=end_nominal+(inside_center_width-end_nominal)*smooth_step(p),
-        b=(inside_station_width-base-a*p*pow(1-p,2))/(p*p*pow(1-p,2)))
-    end_nominal+(inside_center_width-end_nominal)*smooth_step(u)
-    +a*u*pow(1-u,2)+b*pow(u,2)*pow(1-u,2);
-
-function measured_inside_width(y) =
-    inside_target_width(inside_length/2-abs(y));
-
-// The outside and inside are deliberately independent in v0.7.
-// The exterior is a true circular arc. The interior preserves the
-// three physical fit measurements without claiming a parallel offset.
+// Previous 10 mm end and 11.5 mm intermediate station constraints
+// are removed. Center width, arc radius and length determine all points.
 module outer_outline() {
     offset(r=corner_radius) offset(delta=-corner_radius)
         polygon(points=concat(
@@ -110,10 +87,10 @@ module cavity_outline() {
         polygon(points=concat(
             [for (i=[0:inside_segments])
                 let(y=-inside_length/2+inside_length*i/inside_segments)
-                [measured_inside_width(y)/2,y]],
+                [inside_half_width(y),y]],
             [for (i=[inside_segments:-1:0])
                 let(y=-inside_length/2+inside_length*i/inside_segments)
-                [-measured_inside_width(y)/2,y]]
+                [-inside_half_width(y),y]]
         ));
 }
 
