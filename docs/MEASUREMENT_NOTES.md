@@ -119,3 +119,22 @@ The left side is its mirror. Thus the long side's curvature is constant (1/R), u
 **Constraint:** A concentric circular inset with 13.0 mm middle width and 10.0 mm end width over a 21.5 mm length would predict 12.15 mm at 5 mm from the end. The user measured 11.5 mm there. Therefore v0.7 fixes the constant-radius OUTSIDE and retains the measured three-station inside contour separately, giving smooth but variable side-wall thickness. A truly constant-thickness offset would require revisiting at least one measured station or changing the geometric interpretation. Do not describe the complete interior and exterior as exactly parallel.
 
 OpenSCAD 2021.01 rendered the local full part and 5 mm fit gauge successfully. Trimesh inspection: both are one watertight component, external X bounds ±7.75 mm, Y ±12.5 mm, Z 0–12.7 mm (full) or 0–5 mm (gauge). The new outside radius has not been visually or physically accepted by the user yet.
+
+
+## V0.8 concentric circle revision — October 24, 2026 (ACTIVE)
+
+**This section supersedes the previous station-constrained interior and spline approaches.** Per latest user feedback: **use ONLY 13.0 mm at the center as the controlling inside width**, with a smooth circular curve running from either end to center. The previous 10.0 mm end and 11.5 mm intermediate width observations are no longer modeled as fixed fit requirements.
+
+- Exterior long-side arc radius: **45.518 mm**, unchanged.
+- Exterior center width: **15.5 mm**, unchanged; end width approximately 12.0 mm.
+- Interior center width: **13.0 mm**, controlling target.
+- Both circles use the same center; derived interior radius: **44.268 mm**.
+- Wall thickness measured radially between circular side arcs: **1.25 mm** everywhere along those arcs (excluding end and corner transitions).
+- Interior opening length: **21.5 mm**, unchanged.
+- Model-derived interior width at each nominal end: **~10.35 mm**, not forced to match the previously observed 10 mm.
+- Model-derived interior width at 5.0 mm from either end: **~12.25 mm**, not forced to match the previously observed 11.5 mm.
+- Center boss, 12.7 mm insertion-depth envelope, corner fillets, and 5 mm gauge retained.
+- OpenSCAD local renders and trimesh checks: full cap and 5 mm gauge are single, watertight solids with outside extents **25 × 15.5 mm**.
+- **Physical fit remains unknown**. Confirm the circular/parallel appearance in OpenSCAD before trying another gauge.
+
+The circular inside and outside sides share one center, which is geometrically different from the prior approximations that merely matched endpoint tangents.
