@@ -1,9 +1,7 @@
 // Miniblind bottom-rail protective end cap
 // Copyright (C) 2026. Released under GPL-3.0-or-later.
 // X = width; Y = length; Z = depth. Z=0 is the closed end.
-// 21 x 10 mm rail measured; 21.3 mm interior length is retained.
-// Updated curved width: 11.3 mm at center, +0.5 mm clearance on each side.
-// Prototype still awaits successful physical fit test.
+// Three physical interior width stations; not yet fit-validated.
 
 /* [Configuration] */
 mode = "final"; // [final,fit_gauge]
@@ -20,14 +18,13 @@ face_chamfer = 0.45;
 side_power = 2.0;
 side_taper = 0.70;
 
-/* [Measured rail fit (mm)] */
-rail_length = 21.0;        // Measured metal rail long axis, approximate
-rail_width = 10.0;         // Measured metal rail short axis, approximate
-length_clearance = 0.30;  // UNCHANGED: +0.15 per end
-width_clearance = 0.30;   // Original total width allowance
-side_wall_reduction = 0.50; // Move EACH curved cavity side outward by 0.50 mm
-inside_corner_radius = 0.40; // Unmeasured metal corner geometry
-inside_end_ratio = width_ends / width_middle; // Base taper, before uniform wall reduction
+/* [Measured interior profile (mm)] */
+inside_length = 21.5;
+inside_end_width = 10.0;     // 0 mm inward from either end
+inside_station = 5.0;       // Distance inward from either end
+inside_station_width = 11.5;
+inside_center_width = 13.0; // At 10.75 mm inward from either end
+inside_corner_radius = 0.40;
 
 /* [Strength (mm)] */
 face = 2.6;
@@ -44,26 +41,22 @@ gauge_depth = 5.0;
 
 /* [Smoothness] */
 profile_segments = 80;
+inside_segments = 160;
 $fn = 64;
 
 assert(length > 0 && width_middle > width_ends && width_ends > 0);
 assert(cap_depth > face && face >= 1.2);
-assert(rail_length > 0 && rail_width > 0);
-assert(length_clearance >= 0 && width_clearance >= 0);
-assert(rail_length + length_clearance < length);
-assert(side_wall_reduction >= 0);
-assert(rail_width + width_clearance + 2*side_wall_reduction < width_middle);
-assert((rail_width + width_clearance)*inside_end_ratio + 2*side_wall_reduction < width_ends);
-assert(inside_corner_radius >= 0 && inside_corner_radius < rail_width/4);
-assert(inside_end_ratio > 0 && inside_end_ratio < 1);
+assert(inside_length > 0 && inside_length < length);
+assert(inside_station > 0 && inside_station < inside_length/2);
+assert(inside_end_width > 0 && inside_end_width < inside_station_width);
+assert(inside_station_width < inside_center_width && inside_center_width < width_middle);
+assert(inside_corner_radius >= 0 && inside_corner_radius < inside_end_width/4);
 assert(corner_radius > 0 && corner_radius < width_ends/4);
 assert(face_chamfer >= 0 && face_chamfer < face);
 assert(boss_diameter > bore_diameter && bore_depth > 0);
 assert(boss_height > bore_depth && boss_height <= cap_depth-face);
 assert(gauge_depth > 0 && gauge_depth <= cap_depth);
 
-// Both boundaries use the SAME bowed/tapered profile family.
-// Their length and width envelopes are independently adjustable.
 function half_width(y, profile_length, middle_width, end_width) =
     (end_width + (middle_width-end_width) *
     pow(max(0, 1-pow(abs(2*y/profile_length), side_power)), side_taper)) / 2;
@@ -84,16 +77,47 @@ module outer_outline() {
     shaped_outline(length, width_middle, width_ends, corner_radius);
 }
 
+// Two cubic Hermite segments per half, continuous first derivative
+// through the 5 mm measurement station and zero slope at the center.
+// The measured widths are controlling dimensions, not extra clearance.
+function hermite_width(w0, w1, m0, m1, span, u) =
+    (2*pow(u,3)-3*pow(u,2)+1)*w0
+    + (pow(u,3)-2*pow(u,2)+u)*span*m0
+    + (-2*pow(u,3)+3*pow(u,2))*w1
+    + (pow(u,3)-pow(u,2))*span*m1;
+
+function measured_inside_width(y) =
+    let(
+        h = inside_length/2,
+        t = max(0, min(h, h-abs(y))),
+        // Compensate for 0.4 mm corner rounding, keeping ~10 mm
+        // of actual terminal clear width after the offset operation.
+        effective_end_width = inside_end_width + 1.8*inside_corner_radius,
+        first_slope = (inside_station_width-effective_end_width)/inside_station,
+        second_span = h-inside_station,
+        second_slope = (inside_center_width-inside_station_width)/second_span,
+        at_station_slope = (first_slope + second_slope)/2
+    )
+    t <= inside_station
+    ? hermite_width(effective_end_width, inside_station_width,
+                    first_slope, at_station_slope,
+                    inside_station, t/inside_station)
+    : hermite_width(inside_station_width, inside_center_width,
+                    at_station_slope, 0,
+                    second_span, (t-inside_station)/second_span);
+
 module cavity_outline() {
-    // Widen the curved cavity by 0.5 mm per SIDE along its full length.
-    // Both middle width and narrow-end width receive the same +1.0 mm;
-    // scaling only the maximum width would leave the ends undersized.
-    base_middle = rail_width + width_clearance;
-    inner_middle = base_middle + 2*side_wall_reduction;
-    inner_ends = base_middle * inside_end_ratio + 2*side_wall_reduction;
-    shaped_outline(rail_length + length_clearance,
-                   inner_middle, inner_ends, inside_corner_radius);
+    offset(r=inside_corner_radius) offset(delta=-inside_corner_radius)
+        polygon(points=concat(
+            [for (i=[0:inside_segments])
+                let(y=-inside_length/2 + inside_length*i/inside_segments)
+                [ measured_inside_width(y)/2, y ]],
+            [for (i=[inside_segments:-1:0])
+                let(y=-inside_length/2 + inside_length*i/inside_segments)
+                [-measured_inside_width(y)/2, y ]]
+        ));
 }
+
 
 module outer_body() {
     if (face_chamfer > 0) {
