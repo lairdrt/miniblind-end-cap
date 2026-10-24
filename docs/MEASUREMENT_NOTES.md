@@ -238,3 +238,21 @@ User directed a **pure vertical translation** of both v0.13 stubs until their to
 - The `fit_gauge` is explicitly unchanged and stub-free; only `mode="final"` places stubs.
 
 The stub's lip clearance is a parametric `stub_top_clearance = 2.0`; its starting Z is `cap_depth - stub_top_clearance - stub_length`. Physical retention has not yet been verified.
+
+
+## Final fit-accepted design — October 24, 2026
+
+**User confirmation: "Fits fine, thank you"** after inspecting/testing v0.14 complete end cap with both short-wall retention tabs. This closes the iterative fit phase. Treat the final model as a **known-good design**; earlier "unverified" statements in this chronological log describe historical prototypes, not the present accepted model.
+
+Accepted invariants:
+- Outer overall 25.0 mm long × 15.5 mm maximum wide × 12.7 mm deep.
+- Circular long outside walls: R55.0 mm. Inside walls concentric: R53.5 mm.
+- Interior length 21.5 mm, center interior width 12.5 mm, radial long-wall thickness 1.5 mm.
+- Closed floor/face thickness 2.6 mm. Hollow center boss retained.
+- Two opposite inside SHORT-wall trapezoidal friction tabs: X-centered, 4.0 mm across, 5.0 mm along Z, maximum 2.0 mm inward projection. 2.0 mm lead-in / 2.0 mm plateau / 1.0 mm trailing taper.
+- Top edge of each tab **2.0 mm below the open lip**, so Z=5.7–10.7 mm; Y remains at ±10.75 mm short wall, X=0.
+- Source defaults to the full finished cap; historical 5 mm `fit_gauge` remains separately exportable and unchanged.
+- Latest **fit-accepted source** commit: `49fb17565e1882e281f49856c0465950582f5aa9`. Generated exports on main belong to that geometry (and may be re-rendered with different mesh triangle ordering).
+- OpenSCAD views of the actual final model are maintained in `docs/images/` by the automated build, separate from the original reference photographs (not stored on GitHub).
+
+Status: **completed for now; no further dimensional changes authorized.** Differences in future rail profiles, materials, or print calibration may still need independent fit checks.
