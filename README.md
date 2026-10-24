@@ -2,7 +2,7 @@
 
 Parametric OpenSCAD replacement of the protective plastic cap on a miniblind bottom rail. The originals fracture when the blind contacts a windowsill.
 
-**Status: v0.7 constant-radius exterior; fit still unverified.** Both long *exterior* sides now use true circular arcs with a single editable radius **R = 45.518 mm**. The outer envelope is approximately 25 × 15.5 mm, narrowing to 12 mm at the ends. The interior retains the measured opening: length 21.5 mm, widths 10.0 at the ends, 11.5 at 5 mm inward, and 13.0 at the center. These three width stations cannot all lie on a single symmetric circular arc, so the inside curve is independently retained and the walls are not exact constant-thickness offsets. **Inspect the profile before printing.**
+**Status: v0.8 concentric-arc prototype — fit not yet validated.** Both inner and outer long sides are true **concentric circular arcs**, with the 13.0 mm inside center width as the **only controlling interior width measurement**. Exterior radius 45.518 mm, interior radius 44.268 mm; 1.25 mm constant radial wall thickness along each long arc. Interior length remains 21.5 mm. The old 10.0 mm end and 11.5 mm intermediate width constraints have been retired at the user's direction. Predicted interior widths are about 10.35 mm at the ends and 12.25 mm at 5 mm inward. Inspect the new contour before printing.
 
 ## Project
 
@@ -24,17 +24,17 @@ The six original reference photographs remain in the initial locally downloadabl
 | `cap_depth` | 12.7 | Caliper photo |
 | `corner_radius` | 0.65 | Visual estimate |
 | Inside `inside_length` | 21.5 | Latest physical measurement |
-| Inside `inside_end_width` | 10.0 | Width at either end |
-| `inside_station` | 5.0 | Distance inward from either end |
-| `inside_station_width` | 11.5 | Width at 5.0 mm |
-| `inside_center_width` | 13.0 | Width at the center |
-| `inside_corner_radius` | 0.15 | Smaller, unverified fillet; terminal mesh width compensated |
-| Minimum wall thickness | about 1.25 | Computed from printed mesh cross-section |
+| `inside_center_width` | 13.0 | Sole controlling interior width |
+| `inside_side_radius` | 44.268 | Derived from outer arc minus wall thickness |
+| `side_wall` | 1.25 | Derived constant radial wall thickness of long arcs |
+| Predicted interior end width | ~10.35 | Inferred from circle; not enforced |
+| Predicted interior 5 mm width | ~12.25 | Inferred from circle; not enforced |
+| `inside_corner_radius` | 0.15 | Small corner fillets; curved sides remain circular |
 | Impact `face` | 2.6 | Design choice |
 | `boss_diameter` | 4.3 | Unverified estimate |
 | `bore_diameter` | 2.35 | Unverified estimate |
 
-The exterior is constructed from two constant-radius circular arcs and straight end sections with small filleted corners. The measured inside contour is independent because a constant-width circular inset would miss the physical 11.5 mm width at the 5 mm station by approximately 0.75 mm. Wall thickness therefore changes along the sides, although the exterior now has constant curvature. The reinforced closed face and optional hollow center boss are unchanged. Actual fit has not yet been confirmed.
+The complete end cap uses the same circle centers for its inner and outer long sides. Setting only the interior center width gives the inner circle radius and a constant 1.25 mm radial separation. Corner transitions and end walls are separately rounded, and the outer shape remains 25 × 15.5 mm. The finished model includes the reinforced closed face and optional hollow center boss. Geometry-render and mesh checks passed locally, but physical fit, insertion depth and boss engagement remain unverified.
 
 ## Open / print
 
