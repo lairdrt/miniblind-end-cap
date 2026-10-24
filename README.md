@@ -77,6 +77,6 @@ For another blind or another filament, test a fresh print gently before forcing 
 
 ## Git / licensing
 
-This repository's **main** branch records the accepted v0.14 design. The unchanged parametric source is the master; STL, 3MF, and OpenSCAD PNG preview exports are generated and committed by GitHub Actions. The fit-accepted source revision is [`49fb175`](https://github.com/lairdrt/miniblind-end-cap/commit/49fb17565e1882e281f49856c0465950582f5aa9). This commit is an immutable checkpoint; future refinements should branch from the known-good geometry rather than silently replacing it.
+This repository's **main** branch records the accepted v0.14 design. The unchanged parametric source is the master; STL, 3MF, and OpenSCAD PNG preview exports are generated and committed by GitHub Actions. The fit-accepted source revision is [`49fb175`](https://github.com/lairdrt/miniblind-end-cap/commit/49fb17565e1882e281f49856c0465950582f5aa9). The complete tested project (source, STL/3MF and render images) is also preserved at the frozen [`fit-accepted-v0.14` branch](https://github.com/lairdrt/miniblind-end-cap/tree/fit-accepted-v0.14), based on export commit [`3677555`](https://github.com/lairdrt/miniblind-end-cap/commit/3677555503ae13559f9ea4db5c8ab03d917f26b4). That branch is the named known-good checkpoint; future refinements should begin from it rather than silently replace the accepted source.
 
 Original OpenSCAD source and text: GPL-3.0-or-later. See LICENSE.
