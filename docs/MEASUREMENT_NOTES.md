@@ -138,3 +138,18 @@ OpenSCAD 2021.01 rendered the local full part and 5 mm fit gauge successfully. T
 - **Physical fit remains unknown**. Confirm the circular/parallel appearance in OpenSCAD before trying another gauge.
 
 The circular inside and outside sides share one center, which is geometrically different from the prior approximations that merely matched endpoint tangents.
+
+
+## V0.9 inward side-wall thickening — October 24, 2026 (ACTIVE)
+
+User reports v0.8 nearly fits and asks to increase both curved side walls **INWARD by 0.75 mm each**, explicitly without increasing exterior length or width. Preserve concentric circles and everything else.
+
+- Exterior profile and bounding box: **unchanged**, width 15.5 mm, length 25.0 mm, exterior arc R=45.518 mm.
+- Interior length **unchanged** at 21.5 mm; depth, boss and fillets unchanged.
+- Radial wall thickness per curved side: **1.25 -> 2.00 mm**.
+- Derived interior circle radius: **44.268 -> 43.518 mm** (same center as exterior).
+- Interior center width: **13.0 -> 11.5 mm** (1.50 mm narrower overall).
+- The circle determines the other widths: at nominal inside ends ~8.80 mm (previous ~10.35); at 5 mm inward ~10.74 mm (previous ~12.25). These are mathematical predictions, not extra measurements or constrained stations.
+- The change is accomplished **once** via `inside_center_width = 11.5`: the existing `side_wall=(outer_width_center-inside_center_width)/2` and `inside_side_radius=outer_side_radius-side_wall` equations produce the requested +0.75 mm per side automatically. No separate wall modifier.
+
+The new gauge requires physical testing. The narrower opening at the ends is an intentional geometric consequence of inwardly offset concentric circular sides; do not confuse this with changing end-wall length.
