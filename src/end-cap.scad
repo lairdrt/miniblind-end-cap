@@ -1,9 +1,9 @@
 // Miniblind bottom-rail protective end cap
 // Copyright (C) 2026. Released under GPL-3.0-or-later.
 // X = width; Y = length; Z = depth. Z=0 is the closed end.
-// v0.9: thicken each curved wall by 0.75 mm INWARD only.
-// Outer envelope/circular radius unchanged, 21.5mm cavity length preserved.
-// Concentric circular arcs remain; physical fit not yet confirmed.
+// v0.10: back off v0.9's inward thickening by 0.25 mm EACH side.
+// Outside contour/length unchanged. Walls 1.75mm; cavity center 12.0mm.
+// Concentric circular arcs remain; fit not yet confirmed.
 
 /* [Configuration] */
 mode = "final"; // [final,fit_gauge]
@@ -20,7 +20,7 @@ face_chamfer = 0.45;
 
 /* [Concentric interior arc (mm)] */
 inside_length = 21.5;
-inside_center_width = 11.5; // Inward +0.75mm wall/side; was 13.0mm in v0.8
+inside_center_width = 12.0; // +0.25mm each side over v0.9; wall = 1.75mm
 inside_corner_radius = 0.15;
 
 /* [Strength (mm)] */
@@ -64,8 +64,8 @@ function outer_half_width(y) =
     outer_circle_cx + sqrt(outer_side_radius*outer_side_radius-y*y);
 
 // Two truly concentric arcs, with constant normal separation on sides.
-// New derived wall thickness = (15.5-11.5)/2 = 2.0mm.
-// Do NOT subtract another 0.75mm: the single center-width change suffices.
+// Derived wall thickness = (15.5-12.0)/2 = 1.75mm.
+// Change only center width; do not apply a second offset.
 side_wall = (outer_width_center-inside_center_width)/2;
 inside_side_radius = outer_side_radius-side_wall;
 function inside_half_width(y) =
