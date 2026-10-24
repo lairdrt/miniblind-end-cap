@@ -2,7 +2,7 @@
 
 Parametric OpenSCAD replacement of the protective plastic cap on a miniblind bottom rail. The originals fracture when the blind contacts a windowsill.
 
-**Status: v0.5 smooth-contour prototype; not yet physically fit-confirmed.** After a visual failure of the joined-segment inside profile, the interior now uses one smooth quartic curve per side, with tangents matched to the exterior at the ends and center. The measured opening remains **21.5 mm long**, **10.0 mm wide at either end**, **11.5 mm at 5 mm inward**, and **13.0 mm at the center**. The exterior remains **25 × 15.5 mm**. Exact constant wall thickness is not possible while satisfying all three measurements with this exterior.
+**Status: v0.6 shared-contour prototype; not physically fit-confirmed.** Both the inside and outside walls now follow the SAME measured bowed width curve, instead of independent profiles. Inside length **21.5 mm**, width **10.0 mm at either end**, **11.5 mm at 5 mm inward**, and **13.0 mm at the center**. The side-wall expansion is **1.25 mm per side** at corresponding normalized stations; the outside remains **25 × 15.5 mm**, with slightly thicker end walls. Inspect the profile before printing.
 
 ## Project
 
@@ -17,9 +17,9 @@ The six original reference photographs remain in the initial locally downloadabl
 
 | Feature | Starting value | Basis |
 |---|---:|---|
-| Long axis `length` | 25.0 | Caliper photo |
-| Maximum `width_middle` | 15.5 | Caliper photo |
-| End `width_ends` | 12.0 | Caliper photo |
+| Exterior length `length` | 25.0 | Kept for end-wall strength |
+| Exterior maximum width | 15.5 | Derived from 13.0 mm inside + 2×1.25 mm side wall |
+| `side_wall` | 1.25 per side | Derived outward contour expansion; minimum wall ~1.25 mm |
 | `cap_depth` | 12.7 | Caliper photo |
 | `corner_radius` | 0.65 | Visual estimate |
 | Inside `inside_length` | 21.5 | Latest physical measurement |
@@ -33,7 +33,7 @@ The six original reference photographs remain in the initial locally downloadabl
 | `boss_diameter` | 4.3 | Unverified estimate |
 | `bore_diameter` | 2.35 | Unverified estimate |
 
-The model includes the tapered exterior, separately measured smooth interior profile, reinforced closed face and optional blind-hole center boss. The interior is one smooth curve, constrained to the three measured widths and exterior tangent direction at the ends. Terminal width is compensated for the inside corner rounding. Sidewall thickness necessarily varies because a constant inward offset would produce approximately 12.46 mm of interior width at the 5 mm station instead of the measured 11.5 mm. Physical fit, insertion depth, and retention are not yet validated.
+The model includes the tapered exterior, separately measured smooth interior profile, reinforced closed face and optional blind-hole center boss. The interior is one smooth curve constrained by the three measured widths. The outside is generated from the same curve, widened by 1.25 mm on both sides and stretched along the length direction to 25 mm; both walls therefore bow together. This is visually parallel, not an exact constant-normal offset. The previous independent exterior profile (and its conflicting 5 mm width) is no longer used. Physical fit, insertion depth, and retention are not yet validated.
 
 ## Open / print
 
@@ -45,7 +45,7 @@ A PETG final part or bumper on the windowsill may improve impact survival, but t
 
 ## Next measurements
 
-First visually inspect the new smooth inside contour against the original plastic cap, then test the updated fit gauge. Report where it contacts or remains loose along the sidewalls. If the profile fits, measure/verify insertion depth and center-boss engagement on the complete cap. Keep source, documentation and generated exports aligned when adjusting parameters.
+First inspect the new shared-contour inner/outer walls against the original cap, then test the updated fit gauge. Report where it contacts or remains loose along the sidewalls. If the profile fits, measure/verify insertion depth and center-boss engagement on the complete cap. Keep source, documentation and generated exports aligned when adjusting parameters.
 
 ## Git / licensing
 
