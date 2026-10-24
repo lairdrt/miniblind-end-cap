@@ -1,8 +1,8 @@
 // Miniblind bottom-rail protective end cap
 // Copyright (C) 2026. Released under GPL-3.0-or-later.
 // X = width; Y = length; Z = depth. Z=0 is the closed end.
-// The MEASURED INTERIOR is the master shape; the outside follows its curve.
-// Fit not yet physically confirmed. Default mode shows the complete cap.
+// v0.7: true constant-radius circular arcs on both EXTERIOR long sides.
+// Measured interior opening preserved independently; fit unverified.
 
 /* [Configuration] */
 mode = "final"; // [final,fit_gauge]
@@ -11,10 +11,11 @@ mode = "final"; // [final,fit_gauge]
 length = 25.0;
 cap_depth = 12.7;
 
-/* [Profile (mm)] */
+/* [Circular exterior (mm)] */
+outer_width_center = 15.5;
+outer_side_radius = 45.518; // Constant radius of each bowed exterior side
 corner_radius = 0.65;
 face_chamfer = 0.45;
-side_wall = 1.25; // Controls exterior width; 13.0+2*1.25=15.5 mm
 
 /* [Measured interior profile (mm)] */
 inside_length = 21.5;
@@ -38,25 +39,35 @@ bore_depth = 5.0;
 gauge_depth = 5.0;
 
 /* [Smoothness] */
-inside_segments = 160;
+inside_segments = 320;
 $fn = 64;
 
 assert(length > inside_length && inside_length > 0);
-assert(side_wall >= 0.8);
+assert(outer_side_radius > length/2);
+assert(outer_width_center > outer_width_ends && outer_width_ends > 0);
 assert(cap_depth > face && face >= 1.2);
 assert(inside_length > 0 && inside_length < length);
 assert(inside_station > 0 && inside_station < inside_length/2);
 assert(inside_end_width > 0 && inside_end_width < inside_station_width);
-assert(inside_station_width < inside_center_width);
+assert(inside_station_width < inside_center_width && inside_center_width < outer_width_center);
 assert(inside_corner_radius >= 0 && inside_corner_radius < inside_end_width/4);
-assert(corner_radius > 0 && corner_radius < (inside_end_width+2*side_wall)/4);
+assert(corner_radius > 0 && corner_radius < outer_width_ends/4);
 assert(face_chamfer >= 0 && face_chamfer < face);
 assert(boss_diameter > bore_diameter && bore_depth > 0);
 assert(boss_height > bore_depth && boss_height <= cap_depth-face);
 assert(gauge_depth > 0 && gauge_depth <= cap_depth);
 
-// Smooth interior through the measured width stations.
-// Exterior uses this SAME curve, not its own unrelated taper.
+// Each exterior long side is one genuine circular arc (constant radius).
+// End width (~12.0mm at R=45.518) derives from the radius, rather than
+// being independently deformed by a spline.
+outer_circle_cx = outer_width_center/2 - outer_side_radius;
+outer_width_ends = 2*(outer_circle_cx + sqrt(outer_side_radius*outer_side_radius-pow(length/2,2)));
+function outer_half_width(y) =
+    outer_circle_cx + sqrt(outer_side_radius*outer_side_radius-y*y);
+
+// Smooth measured interior through the three supplied width stations.
+// The three stations cannot lie on a single symmetric circular arc;
+// preserving them requires a varying wall thickness.
 function smooth_step(u) = u*u*(3-2*u);
 // Endpoint slope comes from the interior's measured width change.
 function measured_end_slope() =
@@ -79,30 +90,31 @@ function inside_target_width(t) =
 function measured_inside_width(y) =
     inside_target_width(inside_length/2-abs(y));
 
-// Side walls follow the SAME sampled bowed profile. The outside is
-// 1.25mm wider on each side at corresponding normalized positions and
-// slightly longer along Y for stronger end walls. This is a visually
-// parallel contour, not a mathematically exact constant-normal offset.
-module sampled_profile(total_length, extra_side, fillet) {
-    offset(r=fillet) offset(delta=-fillet)
+// The outside and inside are deliberately independent in v0.7.
+// The exterior is a true circular arc. The interior preserves the
+// three physical fit measurements without claiming a parallel offset.
+module outer_outline() {
+    offset(r=corner_radius) offset(delta=-corner_radius)
         polygon(points=concat(
             [for (i=[0:inside_segments])
-                let(yi=-inside_length/2 + inside_length*i/inside_segments,
-                    yo=yi*total_length/inside_length)
-                [measured_inside_width(yi)/2 + extra_side, yo]],
+                let(y=-length/2+length*i/inside_segments)
+                [outer_half_width(y),y]],
             [for (i=[inside_segments:-1:0])
-                let(yi=-inside_length/2 + inside_length*i/inside_segments,
-                    yo=yi*total_length/inside_length)
-                [-measured_inside_width(yi)/2 - extra_side, yo]]
+                let(y=-length/2+length*i/inside_segments)
+                [-outer_half_width(y),y]]
         ));
 }
 
 module cavity_outline() {
-    sampled_profile(inside_length, 0, inside_corner_radius);
-}
-
-module outer_outline() {
-    sampled_profile(length, side_wall, corner_radius);
+    offset(r=inside_corner_radius) offset(delta=-inside_corner_radius)
+        polygon(points=concat(
+            [for (i=[0:inside_segments])
+                let(y=-inside_length/2+inside_length*i/inside_segments)
+                [measured_inside_width(y)/2,y]],
+            [for (i=[inside_segments:-1:0])
+                let(y=-inside_length/2+inside_length*i/inside_segments)
+                [-measured_inside_width(y)/2,y]]
+        ));
 }
 
 module outer_body() {
