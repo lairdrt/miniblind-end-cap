@@ -2,7 +2,7 @@
 
 Parametric OpenSCAD replacement of the protective plastic cap on a miniblind bottom rail. The originals fracture when the blind contacts a windowsill.
 
-**Status: v0.3 curved-fit revision; not yet fit-confirmed.** The 21.3 mm interior length was acceptable on the last printed gauge, but its curved sides were too tight. The latest gauge retains the 21.3 mm opening length and widens the entire curved opening by 1.0 mm (0.5 mm per side), giving an 11.3 mm middle width. Full cap retention and boss engagement are still unverified.
+**Status: v0.4 three-station measured-profile prototype; not yet fit-confirmed.** The previous gauge failed. The new internal profile is symmetric about its 21.5 mm length: 10.0 mm across at each end, 11.5 mm across at 5.0 mm from either end, and 13.0 mm at the center (10.75 mm from either end). The exterior remains 25 × 15.5 mm. Full cap retention and boss engagement are still unverified.
 
 ## Project
 
@@ -22,19 +22,18 @@ The six original reference photographs remain in the initial locally downloadabl
 | End `width_ends` | 12.0 | Caliper photo |
 | `cap_depth` | 12.7 | Caliper photo |
 | `corner_radius` | 0.65 | Visual estimate |
-| Rail `rail_length` | 21.0 | Direct user measurement, approximate |
-| Rail `rail_width` | 10.0 | Direct user measurement, approximate |
-| Total `length_clearance` | 0.30 | First-print allowance (0.15 per end) |
-| Base total `width_clearance` | 0.30 | Original allowance |
-| `side_wall_reduction` | 0.50 per side | New fit feedback: +1.0 mm total across entire curved profile |
-| Middle cavity width | 11.30 | 10.0 + 0.30 + 2×0.50 |
-| Middle sidewall thickness | 2.10 | Reduced from 2.60; external dimensions unchanged |
-| `inside_corner_radius` | 0.40 | Unverified, to be fit-tested |
+| Inside `inside_length` | 21.5 | Latest physical measurement |
+| Inside `inside_end_width` | 10.0 | Width at either end |
+| `inside_station` | 5.0 | Distance inward from either end |
+| `inside_station_width` | 11.5 | Width at 5.0 mm |
+| `inside_center_width` | 13.0 | Width at the center |
+| `inside_corner_radius` | 0.40 | End corner rounding; compensated in the profile |
+| Minimum wall thickness | about 1.25 | Computed from printed mesh cross-section |
 | Impact `face` | 2.6 | Design choice |
 | `boss_diameter` | 4.3 | Unverified estimate |
 | `bore_diameter` | 2.35 | Unverified estimate |
 
-The model includes the tapered, rounded-rectangle profile, cavity, reinforced closed face and optional blind-hole center boss. The metal rail goes *inside* the cavity; the exact end cross-section still requires physical testing. The cavity dimensions are controlled independently of the external dimensions. The long interior dimension is intentionally unchanged; both curved interior sides are shifted outward uniformly by 0.5 mm including the narrow ends.
+The model includes the tapered exterior, separately measured smooth interior profile, reinforced closed face and optional blind-hole center boss. The interior profile is interpolated through three independent width stations rather than scaled from the exterior. Terminal width is compensated for rounding of the inside corners. Physical fit, insertion depth, and retention are not yet validated.
 
 ## Open / print
 
@@ -46,7 +45,7 @@ A PETG final part or bumper on the windowsill may improve impact survival, but t
 
 ## Next measurements
 
-Photograph the exposed end of the actual metal blind rail straight-on to verify corner and taper shape. The bounding dimensions are approximately 21 x 10 mm, but insertion depth and center boss engagement are not yet known. Keep source, documentation and generated exports aligned when adjusting parameters.
+Test the updated fit gauge. Report where it contacts or remains loose along the sidewalls. If the profile fits, measure/verify insertion depth and center-boss engagement on the complete cap. Keep source, documentation and generated exports aligned when adjusting parameters.
 
 ## Git / licensing
 
