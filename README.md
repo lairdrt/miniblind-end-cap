@@ -2,7 +2,7 @@
 
 Parametric OpenSCAD replacement of the protective plastic cap on a miniblind bottom rail. The originals fracture when the blind contacts a windowsill.
 
-**Status: v0.11 wider-side concentric-arc fit prototype; physical fit not yet confirmed.** The interior center opening is now **12.50 mm**. Both long sides remain parallel concentric circular arcs, with outer radius **55.0 mm**, inner radius **53.5 mm**, and constant curved-wall radial thickness **1.50 mm**. The increased circular radius opens the sides nearer the ends, while the maximum outside width stays **15.5 mm**, outside length **25.0 mm**, and inside length **21.5 mm**. Predicted inside widths: ~10.32 mm at the ends, ~11.88 mm at 5 mm inward. The exterior *end* width increases to ~12.62 mm; this is intentional. Test the fit gauge before printing the full cap.
+**Status: v0.12 retention-stub prototype.** The v0.11 gauge **fits well in the real blind rail**, according to the user's physical test. Its successful 12.5 mm interior midpoint, circular sidewalls (R55.0 outer, R53.5 inner), 21.5 mm interior length, and 25 × 15.5 mm external envelope are **unchanged**. The full cap now adds one centered trapezoidal retention stub on the inside of each SHORT end wall: **4 mm across × 5 mm along depth × 2 mm maximum inward projection**. The opening-side slope gives a gradual press fit rather than an abrupt orthogonal obstruction. The retained gauge remains unchanged and stub-free. Stub retention and full-cap engagement still need physical testing.
 
 ## Project
 
@@ -36,6 +36,19 @@ The six original reference photographs remain in the initial locally downloadabl
 
 The complete end cap uses the same circle centers for its inner and outer long sides. Setting only the interior center width gives the inner circle radius and a constant 1.50 mm radial separation. Corner transitions and end walls are separately rounded, and the outer shape remains 25 × 15.5 mm. The finished model includes the reinforced closed face and optional hollow center boss. Geometry-render and mesh checks passed locally, but physical fit, insertion depth and boss engagement remain unverified.
 
+## Retention stubs (full cap only)
+
+The full cap has two symmetric raised trapezoid-profile grips at the center of the inner **short-end walls**, Y = ±10.75 mm, not on the long curved sidewalls. A gentle `/---\\` side profile allows the rail to meet the stub gradually when the cap is pushed on. Parameters in `src/end-cap.scad`:
+
+- `include_retention_stubs = true` — enable/disable both stubs (full cap only).
+- `stub_width = 4.0` mm — across each end wall (X).
+- `stub_length = 5.0` mm — down the face of each end wall along Z toward the cap's closed end.
+- `stub_projection = 2.0` mm — peak projection into the rail space (Y).
+- `stub_lead_ramp = 2.0` mm, `stub_trailing_ramp = 1.0` mm — the leading slope runs from the opening side, followed by a 2 mm flat plateau and a 1 mm trailing slope.
+- `stub_embed = 0.20` mm — hidden overlap into each end wall to form a solid joint, *not* an extra protrusion.
+
+The front of each stub is between `z=face=2.6 mm` and `z=7.6 mm`. Two opposed 2 mm projections reduce the free Y opening **locally** by up to 4 mm: test gently, do not force it if the rail resists. The `fit_gauge` continues to check only the originally fitted cavity silhouette and does not include stubs.
+
 ## Open / print
 
 Open `src/end-cap.scad` in OpenSCAD, F6, and export STL. Default `mode = "final"` shows the full finished cap. For a quick profile-only test set `mode = "fit_gauge"`, export the gauge, then **restore `final`**.
@@ -46,7 +59,7 @@ A PETG final part or bumper on the windowsill may improve impact survival, but t
 
 ## Next measurements
 
-Inspect the larger-radius concentric arcs in OpenSCAD, then print the updated fit gauge. The outside arc changes near the ends, although its maximum width and length are unchanged. Report where it contacts or remains loose along the sidewalls. If the profile fits, measure/verify insertion depth and center-boss engagement on the complete cap. Keep source, documentation and generated exports aligned when adjusting parameters.
+The curved-profile gauge is physically fit-confirmed. Inspect the new trapezoidal retention stubs in the complete end cap before printing. Test the full cap gently for snap/retention; adjust only the stub dimensions if fit changes are needed. Report where it contacts or remains loose along the sidewalls. If the profile fits, measure/verify insertion depth and center-boss engagement on the complete cap. Keep source, documentation and generated exports aligned when adjusting parameters.
 
 ## Git / licensing
 
